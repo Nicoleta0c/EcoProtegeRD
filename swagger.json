@@ -1,0 +1,1124 @@
+﻿{
+    "openapi":  "3.0.0",
+    "info":  {
+                 "title":  "API Ministerio de Medio Ambiente RD",
+                 "description":  "API para la aplicaciÃ³n mÃ³vil del Ministerio de Medio Ambiente de RepÃºblica Dominicana",
+                 "version":  "1.0.0",
+                 "contact":  {
+                                 "name":  "Soporte TÃ©cnico",
+                                 "email":  "soporte@medioambiente.gob.do"
+                             }
+             },
+    "servers":  [
+                    {
+                        "url":  "https://adamix.net/medioambiente",
+                        "description":  "Servidor de producciÃ³n"
+                    },
+                    {
+                        "url":  "",
+                        "description":  "Servidor actual (relativo)"
+                    },
+                    {
+                        "url":  "http://localhost/api/public",
+                        "description":  "Servidor de desarrollo local"
+                    }
+                ],
+    "tags":  [
+                 {
+                     "name":  "AutenticaciÃ³n",
+                     "description":  "Endpoints para gestiÃ³n de usuarios y autenticaciÃ³n"
+                 },
+                 {
+                     "name":  "PÃºblicos",
+                     "description":  "Endpoints accesibles sin autenticaciÃ³n"
+                 },
+                 {
+                     "name":  "Protegidos",
+                     "description":  "Endpoints que requieren autenticaciÃ³n"
+                 }
+             ],
+    "paths":  {
+                  "/auth/register":  {
+                                         "post":  {
+                                                      "tags":  [
+                                                                   "AutenticaciÃ³n"
+                                                               ],
+                                                      "summary":  "Registrar nuevo usuario",
+                                                      "requestBody":  {
+                                                                          "required":  true,
+                                                                          "content":  {
+                                                                                          "application/json":  {
+                                                                                                                   "schema":  {
+                                                                                                                                  "type":  "object",
+                                                                                                                                  "required":  [
+                                                                                                                                                   "cedula",
+                                                                                                                                                   "nombre",
+                                                                                                                                                   "apellido",
+                                                                                                                                                   "correo",
+                                                                                                                                                   "password",
+                                                                                                                                                   "telefono",
+                                                                                                                                                   "matricula"
+                                                                                                                                               ],
+                                                                                                                                  "properties":  {
+                                                                                                                                                     "cedula":  {
+                                                                                                                                                                    "type":  "string",
+                                                                                                                                                                    "example":  "00100000000"
+                                                                                                                                                                },
+                                                                                                                                                     "nombre":  {
+                                                                                                                                                                    "type":  "string",
+                                                                                                                                                                    "example":  "Juan"
+                                                                                                                                                                },
+                                                                                                                                                     "apellido":  {
+                                                                                                                                                                      "type":  "string",
+                                                                                                                                                                      "example":  "PÃ©rez"
+                                                                                                                                                                  },
+                                                                                                                                                     "correo":  {
+                                                                                                                                                                    "type":  "string",
+                                                                                                                                                                    "format":  "email",
+                                                                                                                                                                    "example":  "juan@example.com"
+                                                                                                                                                                },
+                                                                                                                                                     "password":  {
+                                                                                                                                                                      "type":  "string",
+                                                                                                                                                                      "format":  "password",
+                                                                                                                                                                      "example":  "123456"
+                                                                                                                                                                  },
+                                                                                                                                                     "telefono":  {
+                                                                                                                                                                      "type":  "string",
+                                                                                                                                                                      "example":  "8095551234"
+                                                                                                                                                                  },
+                                                                                                                                                     "matricula":  {
+                                                                                                                                                                       "type":  "string",
+                                                                                                                                                                       "example":  "2021-0123",
+                                                                                                                                                                       "description":  "MatrÃ­cula del estudiante"
+                                                                                                                                                                   }
+                                                                                                                                                 }
+                                                                                                                              }
+                                                                                                               }
+                                                                                      }
+                                                                      },
+                                                      "responses":  {
+                                                                        "201":  {
+                                                                                    "description":  "Usuario registrado exitosamente",
+                                                                                    "content":  {
+                                                                                                    "application/json":  {
+                                                                                                                             "schema":  {
+                                                                                                                                            "type":  "object",
+                                                                                                                                            "properties":  {
+                                                                                                                                                               "token":  {
+                                                                                                                                                                             "type":  "string"
+                                                                                                                                                                         },
+                                                                                                                                                               "usuario":  {
+                                                                                                                                                                               "$ref":  "#/components/schemas/Usuario"
+                                                                                                                                                                           }
+                                                                                                                                                           }
+                                                                                                                                        }
+                                                                                                                         }
+                                                                                                }
+                                                                                },
+                                                                        "400":  {
+                                                                                    "$ref":  "#/components/responses/BadRequest"
+                                                                                },
+                                                                        "409":  {
+                                                                                    "$ref":  "#/components/responses/Conflict"
+                                                                                }
+                                                                    }
+                                                  }
+                                     },
+                  "/auth/login":  {
+                                      "post":  {
+                                                   "tags":  [
+                                                                "AutenticaciÃ³n"
+                                                            ],
+                                                   "summary":  "Iniciar sesiÃ³n",
+                                                   "requestBody":  {
+                                                                       "required":  true,
+                                                                       "content":  {
+                                                                                       "application/json":  {
+                                                                                                                "schema":  {
+                                                                                                                               "type":  "object",
+                                                                                                                               "required":  [
+                                                                                                                                                "correo",
+                                                                                                                                                "password"
+                                                                                                                                            ],
+                                                                                                                               "properties":  {
+                                                                                                                                                  "correo":  {
+                                                                                                                                                                 "type":  "string",
+                                                                                                                                                                 "format":  "email",
+                                                                                                                                                                 "example":  "juan@example.com"
+                                                                                                                                                             },
+                                                                                                                                                  "password":  {
+                                                                                                                                                                   "type":  "string",
+                                                                                                                                                                   "format":  "password",
+                                                                                                                                                                   "example":  "123456"
+                                                                                                                                                               }
+                                                                                                                                              }
+                                                                                                                           }
+                                                                                                            }
+                                                                                   }
+                                                                   },
+                                                   "responses":  {
+                                                                     "200":  {
+                                                                                 "description":  "Login exitoso",
+                                                                                 "content":  {
+                                                                                                 "application/json":  {
+                                                                                                                          "schema":  {
+                                                                                                                                         "type":  "object",
+                                                                                                                                         "properties":  {
+                                                                                                                                                            "token":  {
+                                                                                                                                                                          "type":  "string"
+                                                                                                                                                                      },
+                                                                                                                                                            "usuario":  {
+                                                                                                                                                                            "$ref":  "#/components/schemas/Usuario"
+                                                                                                                                                                        }
+                                                                                                                                                        }
+                                                                                                                                     }
+                                                                                                                      }
+                                                                                             }
+                                                                             },
+                                                                     "401":  {
+                                                                                 "$ref":  "#/components/responses/Unauthorized"
+                                                                             }
+                                                                 }
+                                               }
+                                  },
+                  "/auth/recover":  {
+                                        "post":  {
+                                                     "tags":  [
+                                                                  "AutenticaciÃ³n"
+                                                              ],
+                                                     "summary":  "Recuperar contraseÃ±a",
+                                                     "requestBody":  {
+                                                                         "required":  true,
+                                                                         "content":  {
+                                                                                         "application/json":  {
+                                                                                                                  "schema":  {
+                                                                                                                                 "type":  "object",
+                                                                                                                                 "required":  [
+                                                                                                                                                  "correo"
+                                                                                                                                              ],
+                                                                                                                                 "properties":  {
+                                                                                                                                                    "correo":  {
+                                                                                                                                                                   "type":  "string",
+                                                                                                                                                                   "format":  "email",
+                                                                                                                                                                   "example":  "juan@example.com"
+                                                                                                                                                               }
+                                                                                                                                                }
+                                                                                                                             }
+                                                                                                              }
+                                                                                     }
+                                                                     },
+                                                     "responses":  {
+                                                                       "200":  {
+                                                                                   "description":  "CÃ³digo enviado",
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+                                                                                                                                           "type":  "object",
+                                                                                                                                           "properties":  {
+                                                                                                                                                              "mensaje":  {
+                                                                                                                                                                              "type":  "string"
+                                                                                                                                                                          },
+                                                                                                                                                              "codigo":  {
+                                                                                                                                                                             "type":  "string",
+                                                                                                                                                                             "description":  "Solo para desarrollo"
+                                                                                                                                                                         }
+                                                                                                                                                          }
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               }
+                                                                               }
+                                                                   }
+                                                 }
+                                    },
+                  "/auth/reset":  {
+                                      "post":  {
+                                                   "tags":  [
+                                                                "AutenticaciÃ³n"
+                                                            ],
+                                                   "summary":  "Resetear contraseÃ±a",
+                                                   "requestBody":  {
+                                                                       "required":  true,
+                                                                       "content":  {
+                                                                                       "application/json":  {
+                                                                                                                "schema":  {
+                                                                                                                               "type":  "object",
+                                                                                                                               "required":  [
+                                                                                                                                                "correo",
+                                                                                                                                                "codigo",
+                                                                                                                                                "nueva_password"
+                                                                                                                                            ],
+                                                                                                                               "properties":  {
+                                                                                                                                                  "correo":  {
+                                                                                                                                                                 "type":  "string",
+                                                                                                                                                                 "format":  "email"
+                                                                                                                                                             },
+                                                                                                                                                  "codigo":  {
+                                                                                                                                                                 "type":  "string"
+                                                                                                                                                             },
+                                                                                                                                                  "nueva_password":  {
+                                                                                                                                                                         "type":  "string",
+                                                                                                                                                                         "format":  "password"
+                                                                                                                                                                     }
+                                                                                                                                              }
+                                                                                                                           }
+                                                                                                            }
+                                                                                   }
+                                                                   },
+                                                   "responses":  {
+                                                                     "200":  {
+                                                                                 "description":  "ContraseÃ±a actualizada"
+                                                                             },
+                                                                     "401":  {
+                                                                                 "$ref":  "#/components/responses/Unauthorized"
+                                                                             }
+                                                                 }
+                                               }
+                                  },
+                  "/servicios":  {
+                                     "get":  {
+                                                 "tags":  [
+                                                              "PÃºblicos"
+                                                          ],
+                                                 "summary":  "Listar servicios",
+                                                 "responses":  {
+                                                                   "200":  {
+                                                                               "description":  "Lista de servicios",
+                                                                               "content":  {
+                                                                                               "application/json":  {
+                                                                                                                        "schema":  {
+                                                                                                                                       "type":  "array",
+                                                                                                                                       "items":  {
+                                                                                                                                                     "$ref":  "#/components/schemas/Servicio"
+                                                                                                                                                 }
+                                                                                                                                   }
+                                                                                                                    }
+                                                                                           }
+                                                                           }
+                                                               }
+                                             }
+                                 },
+                  "/servicios/{id}":  {
+                                          "get":  {
+                                                      "tags":  [
+                                                                   "PÃºblicos"
+                                                               ],
+                                                      "summary":  "Obtener servicio por ID",
+                                                      "parameters":  [
+                                                                         {
+                                                                             "name":  "id",
+                                                                             "in":  "path",
+                                                                             "required":  true,
+                                                                             "schema":  {
+                                                                                            "type":  "string"
+                                                                                        }
+                                                                         }
+                                                                     ],
+                                                      "responses":  {
+                                                                        "200":  {
+                                                                                    "description":  "Servicio encontrado",
+                                                                                    "content":  {
+                                                                                                    "application/json":  {
+                                                                                                                             "schema":  {
+                                                                                                                                            "$ref":  "#/components/schemas/Servicio"
+                                                                                                                                        }
+                                                                                                                         }
+                                                                                                }
+                                                                                },
+                                                                        "404":  {
+                                                                                    "$ref":  "#/components/responses/NotFound"
+                                                                                }
+                                                                    }
+                                                  }
+                                      },
+                  "/noticias":  {
+                                    "get":  {
+                                                "tags":  [
+                                                             "PÃºblicos"
+                                                         ],
+                                                "summary":  "Listar noticias",
+                                                "responses":  {
+                                                                  "200":  {
+                                                                              "description":  "Lista de noticias ordenadas por fecha",
+                                                                              "content":  {
+                                                                                              "application/json":  {
+                                                                                                                       "schema":  {
+                                                                                                                                      "type":  "array",
+                                                                                                                                      "items":  {
+                                                                                                                                                    "$ref":  "#/components/schemas/Noticia"
+                                                                                                                                                }
+                                                                                                                                  }
+                                                                                                                   }
+                                                                                          }
+                                                                          }
+                                                              }
+                                            }
+                                },
+                  "/videos":  {
+                                  "get":  {
+                                              "tags":  [
+                                                           "PÃºblicos"
+                                                       ],
+                                              "summary":  "Listar videos educativos",
+                                              "parameters":  [
+                                                                 {
+                                                                     "name":  "categoria",
+                                                                     "in":  "query",
+                                                                     "schema":  {
+                                                                                    "type":  "string",
+                                                                                    "enum":  [
+                                                                                                 "reciclaje",
+                                                                                                 "conservacion",
+                                                                                                 "cambio_climatico",
+                                                                                                 "biodiversidad"
+                                                                                             ]
+                                                                                }
+                                                                 }
+                                                             ],
+                                              "responses":  {
+                                                                "200":  {
+                                                                            "description":  "Lista de videos",
+                                                                            "content":  {
+                                                                                            "application/json":  {
+                                                                                                                     "schema":  {
+                                                                                                                                    "type":  "array",
+                                                                                                                                    "items":  {
+                                                                                                                                                  "$ref":  "#/components/schemas/Video"
+                                                                                                                                              }
+                                                                                                                                }
+                                                                                                                 }
+                                                                                        }
+                                                                        }
+                                                            }
+                                          }
+                              },
+                  "/areas_protegidas":  {
+                                            "get":  {
+                                                        "tags":  [
+                                                                     "PÃºblicos"
+                                                                 ],
+                                                        "summary":  "Listar Ã¡reas protegidas",
+                                                        "parameters":  [
+                                                                           {
+                                                                               "name":  "tipo",
+                                                                               "in":  "query",
+                                                                               "schema":  {
+                                                                                              "type":  "string",
+                                                                                              "enum":  [
+                                                                                                           "parque_nacional",
+                                                                                                           "reserva_cientifica",
+                                                                                                           "monumento_natural",
+                                                                                                           "refugio_vida_silvestre"
+                                                                                                       ]
+                                                                                          }
+                                                                           },
+                                                                           {
+                                                                               "name":  "busqueda",
+                                                                               "in":  "query",
+                                                                               "schema":  {
+                                                                                              "type":  "string"
+                                                                                          }
+                                                                           }
+                                                                       ],
+                                                        "responses":  {
+                                                                          "200":  {
+                                                                                      "description":  "Lista de Ã¡reas protegidas",
+                                                                                      "content":  {
+                                                                                                      "application/json":  {
+                                                                                                                               "schema":  {
+                                                                                                                                              "type":  "array",
+                                                                                                                                              "items":  {
+                                                                                                                                                            "$ref":  "#/components/schemas/AreaProtegida"
+                                                                                                                                                        }
+                                                                                                                                          }
+                                                                                                                           }
+                                                                                                  }
+                                                                                  }
+                                                                      }
+                                                    }
+                                        },
+                  "/medidas":  {
+                                   "get":  {
+                                               "tags":  [
+                                                            "PÃºblicos"
+                                                        ],
+                                               "summary":  "Listar medidas ambientales",
+                                               "parameters":  [
+                                                                  {
+                                                                      "name":  "categoria",
+                                                                      "in":  "query",
+                                                                      "schema":  {
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                  }
+                                                              ],
+                                               "responses":  {
+                                                                 "200":  {
+                                                                             "description":  "Lista de medidas",
+                                                                             "content":  {
+                                                                                             "application/json":  {
+                                                                                                                      "schema":  {
+                                                                                                                                     "type":  "array",
+                                                                                                                                     "items":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/Medida"
+                                                                                                                                               }
+                                                                                                                                 }
+                                                                                                                  }
+                                                                                         }
+                                                                         }
+                                                             }
+                                           }
+                               },
+                  "/equipo":  {
+                                  "get":  {
+                                              "tags":  [
+                                                           "PÃºblicos"
+                                                       ],
+                                              "summary":  "Listar equipo del ministerio",
+                                              "parameters":  [
+                                                                 {
+                                                                     "name":  "departamento",
+                                                                     "in":  "query",
+                                                                     "schema":  {
+                                                                                    "type":  "string"
+                                                                                }
+                                                                 }
+                                                             ],
+                                              "responses":  {
+                                                                "200":  {
+                                                                            "description":  "Lista del equipo",
+                                                                            "content":  {
+                                                                                            "application/json":  {
+                                                                                                                     "schema":  {
+                                                                                                                                    "type":  "array",
+                                                                                                                                    "items":  {
+                                                                                                                                                  "$ref":  "#/components/schemas/Miembro"
+                                                                                                                                              }
+                                                                                                                                }
+                                                                                                                 }
+                                                                                        }
+                                                                        }
+                                                            }
+                                          }
+                              },
+                  "/voluntarios":  {
+                                       "post":  {
+                                                    "tags":  [
+                                                                 "PÃºblicos"
+                                                             ],
+                                                    "summary":  "Solicitar ser voluntario",
+                                                    "requestBody":  {
+                                                                        "required":  true,
+                                                                        "content":  {
+                                                                                        "application/json":  {
+                                                                                                                 "schema":  {
+                                                                                                                                "type":  "object",
+                                                                                                                                "required":  [
+                                                                                                                                                 "cedula",
+                                                                                                                                                 "nombre",
+                                                                                                                                                 "apellido",
+                                                                                                                                                 "correo",
+                                                                                                                                                 "password",
+                                                                                                                                                 "telefono"
+                                                                                                                                             ],
+                                                                                                                                "properties":  {
+                                                                                                                                                   "cedula":  {
+                                                                                                                                                                  "type":  "string"
+                                                                                                                                                              },
+                                                                                                                                                   "nombre":  {
+                                                                                                                                                                  "type":  "string"
+                                                                                                                                                              },
+                                                                                                                                                   "apellido":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                },
+                                                                                                                                                   "correo":  {
+                                                                                                                                                                  "type":  "string",
+                                                                                                                                                                  "format":  "email"
+                                                                                                                                                              },
+                                                                                                                                                   "password":  {
+                                                                                                                                                                    "type":  "string",
+                                                                                                                                                                    "format":  "password"
+                                                                                                                                                                },
+                                                                                                                                                   "telefono":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                }
+                                                                                                                                               }
+                                                                                                                            }
+                                                                                                             }
+                                                                                    }
+                                                                    },
+                                                    "responses":  {
+                                                                      "201":  {
+                                                                                  "description":  "Solicitud registrada"
+                                                                              },
+                                                                      "409":  {
+                                                                                  "$ref":  "#/components/responses/Conflict"
+                                                                              }
+                                                                  }
+                                                }
+                                   },
+                  "/normativas":  {
+                                      "get":  {
+                                                  "tags":  [
+                                                               "Protegidos"
+                                                           ],
+                                                  "summary":  "Listar normativas ambientales",
+                                                  "security":  [
+                                                                   {
+                                                                       "bearerAuth":  [
+
+                                                                                      ]
+                                                                   }
+                                                               ],
+                                                  "parameters":  [
+                                                                     {
+                                                                         "name":  "tipo",
+                                                                         "in":  "query",
+                                                                         "schema":  {
+                                                                                        "type":  "string"
+                                                                                    }
+                                                                     },
+                                                                     {
+                                                                         "name":  "busqueda",
+                                                                         "in":  "query",
+                                                                         "schema":  {
+                                                                                        "type":  "string"
+                                                                                    }
+                                                                     }
+                                                                 ],
+                                                  "responses":  {
+                                                                    "200":  {
+                                                                                "description":  "Lista de normativas",
+                                                                                "content":  {
+                                                                                                "application/json":  {
+                                                                                                                         "schema":  {
+                                                                                                                                        "type":  "array",
+                                                                                                                                        "items":  {
+                                                                                                                                                      "$ref":  "#/components/schemas/Normativa"
+                                                                                                                                                  }
+                                                                                                                                    }
+                                                                                                                     }
+                                                                                            }
+                                                                            },
+                                                                    "401":  {
+                                                                                "$ref":  "#/components/responses/Unauthorized"
+                                                                            }
+                                                                }
+                                              }
+                                  },
+                  "/reportes":  {
+                                    "get":  {
+                                                "tags":  [
+                                                             "Protegidos"
+                                                         ],
+                                                "summary":  "Listar mis reportes",
+                                                "security":  [
+                                                                 {
+                                                                     "bearerAuth":  [
+
+                                                                                    ]
+                                                                 }
+                                                             ],
+                                                "responses":  {
+                                                                  "200":  {
+                                                                              "description":  "Lista de reportes del usuario",
+                                                                              "content":  {
+                                                                                              "application/json":  {
+                                                                                                                       "schema":  {
+                                                                                                                                      "type":  "array",
+                                                                                                                                      "items":  {
+                                                                                                                                                    "$ref":  "#/components/schemas/Reporte"
+                                                                                                                                                }
+                                                                                                                                  }
+                                                                                                                   }
+                                                                                          }
+                                                                          },
+                                                                  "401":  {
+                                                                              "$ref":  "#/components/responses/Unauthorized"
+                                                                          }
+                                                              }
+                                            },
+                                    "post":  {
+                                                 "tags":  [
+                                                              "Protegidos"
+                                                          ],
+                                                 "summary":  "Crear nuevo reporte",
+                                                 "security":  [
+                                                                  {
+                                                                      "bearerAuth":  [
+
+                                                                                     ]
+                                                                  }
+                                                              ],
+                                                 "requestBody":  {
+                                                                     "required":  true,
+                                                                     "content":  {
+                                                                                     "application/json":  {
+                                                                                                              "schema":  {
+                                                                                                                             "type":  "object",
+                                                                                                                             "required":  [
+                                                                                                                                              "titulo",
+                                                                                                                                              "descripcion",
+                                                                                                                                              "foto",
+                                                                                                                                              "latitud",
+                                                                                                                                              "longitud"
+                                                                                                                                          ],
+                                                                                                                             "properties":  {
+                                                                                                                                                "titulo":  {
+                                                                                                                                                               "type":  "string"
+                                                                                                                                                           },
+                                                                                                                                                "descripcion":  {
+                                                                                                                                                                    "type":  "string"
+                                                                                                                                                                },
+                                                                                                                                                "foto":  {
+                                                                                                                                                             "type":  "string",
+                                                                                                                                                             "format":  "byte",
+                                                                                                                                                             "description":  "Imagen en base64"
+                                                                                                                                                         },
+                                                                                                                                                "latitud":  {
+                                                                                                                                                                "type":  "number"
+                                                                                                                                                            },
+                                                                                                                                                "longitud":  {
+                                                                                                                                                                 "type":  "number"
+                                                                                                                                                             }
+                                                                                                                                            }
+                                                                                                                         }
+                                                                                                          }
+                                                                                 }
+                                                                 },
+                                                 "responses":  {
+                                                                   "201":  {
+                                                                               "description":  "Reporte creado"
+                                                                           },
+                                                                   "401":  {
+                                                                               "$ref":  "#/components/responses/Unauthorized"
+                                                                           }
+                                                               }
+                                             }
+                                },
+                  "/reportes/{id}":  {
+                                         "get":  {
+                                                     "tags":  [
+                                                                  "Protegidos"
+                                                              ],
+                                                     "summary":  "Obtener reporte por ID",
+                                                     "security":  [
+                                                                      {
+                                                                          "bearerAuth":  [
+
+                                                                                         ]
+                                                                      }
+                                                                  ],
+                                                     "parameters":  [
+                                                                        {
+                                                                            "name":  "id",
+                                                                            "in":  "path",
+                                                                            "required":  true,
+                                                                            "schema":  {
+                                                                                           "type":  "string"
+                                                                                       }
+                                                                        }
+                                                                    ],
+                                                     "responses":  {
+                                                                       "200":  {
+                                                                                   "description":  "Reporte encontrado",
+                                                                                   "content":  {
+                                                                                                   "application/json":  {
+                                                                                                                            "schema":  {
+                                                                                                                                           "$ref":  "#/components/schemas/Reporte"
+                                                                                                                                       }
+                                                                                                                        }
+                                                                                               }
+                                                                               },
+                                                                       "401":  {
+                                                                                   "$ref":  "#/components/responses/Unauthorized"
+                                                                               },
+                                                                       "403":  {
+                                                                                   "$ref":  "#/components/responses/Forbidden"
+                                                                               },
+                                                                       "404":  {
+                                                                                   "$ref":  "#/components/responses/NotFound"
+                                                                               }
+                                                                   }
+                                                 }
+                                     },
+                  "/usuarios":  {
+                                    "put":  {
+                                                "tags":  [
+                                                             "Protegidos"
+                                                         ],
+                                                "summary":  "Actualizar perfil o cambiar contraseÃ±a",
+                                                "security":  [
+                                                                 {
+                                                                     "bearerAuth":  [
+
+                                                                                    ]
+                                                                 }
+                                                             ],
+                                                "requestBody":  {
+                                                                    "required":  true,
+                                                                    "content":  {
+                                                                                    "application/json":  {
+                                                                                                             "schema":  {
+                                                                                                                            "oneOf":  [
+                                                                                                                                          {
+                                                                                                                                              "type":  "object",
+                                                                                                                                              "properties":  {
+                                                                                                                                                                 "nombre":  "@{type=string}",
+                                                                                                                                                                 "apellido":  "@{type=string}",
+                                                                                                                                                                 "telefono":  "@{type=string}"
+                                                                                                                                                             }
+                                                                                                                                          },
+                                                                                                                                          {
+                                                                                                                                              "type":  "object",
+                                                                                                                                              "required":  [
+                                                                                                                                                               "password_actual",
+                                                                                                                                                               "password_nueva"
+                                                                                                                                                           ],
+                                                                                                                                              "properties":  {
+                                                                                                                                                                 "password_actual":  "@{type=string; format=password}",
+                                                                                                                                                                 "password_nueva":  "@{type=string; format=password}"
+                                                                                                                                                             }
+                                                                                                                                          }
+                                                                                                                                      ]
+                                                                                                                        }
+                                                                                                         }
+                                                                                }
+                                                                },
+                                                "responses":  {
+                                                                  "200":  {
+                                                                              "description":  "ActualizaciÃ³n exitosa"
+                                                                          },
+                                                                  "401":  {
+                                                                              "$ref":  "#/components/responses/Unauthorized"
+                                                                          }
+                                                              }
+                                            }
+                                }
+              },
+    "components":  {
+                       "securitySchemes":  {
+                                               "bearerAuth":  {
+                                                                  "type":  "http",
+                                                                  "scheme":  "bearer",
+                                                                  "bearerFormat":  "JWT"
+                                                              }
+                                           },
+                       "schemas":  {
+                                       "Usuario":  {
+                                                       "type":  "object",
+                                                       "properties":  {
+                                                                          "id":  {
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                          "cedula":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                          "nombre":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                          "apellido":  {
+                                                                                           "type":  "string"
+                                                                                       },
+                                                                          "correo":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                          "telefono":  {
+                                                                                           "type":  "string"
+                                                                                       }
+                                                                      }
+                                                   },
+                                       "Servicio":  {
+                                                        "type":  "object",
+                                                        "properties":  {
+                                                                           "id":  {
+                                                                                      "type":  "string"
+                                                                                  },
+                                                                           "nombre":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                           "descripcion":  {
+                                                                                               "type":  "string"
+                                                                                           },
+                                                                           "icono":  {
+                                                                                         "type":  "string"
+                                                                                     }
+                                                                       }
+                                                    },
+                                       "Noticia":  {
+                                                       "type":  "object",
+                                                       "properties":  {
+                                                                          "id":  {
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                          "titulo":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                          "resumen":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                          "contenido":  {
+                                                                                            "type":  "string"
+                                                                                        },
+                                                                          "imagen":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                          "fecha":  {
+                                                                                        "type":  "string",
+                                                                                        "format":  "date-time"
+                                                                                    }
+                                                                      }
+                                                   },
+                                       "Video":  {
+                                                     "type":  "object",
+                                                     "properties":  {
+                                                                        "id":  {
+                                                                                   "type":  "string"
+                                                                               },
+                                                                        "titulo":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                        "descripcion":  {
+                                                                                            "type":  "string"
+                                                                                        },
+                                                                        "url":  {
+                                                                                    "type":  "string"
+                                                                                },
+                                                                        "thumbnail":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                        "categoria":  {
+                                                                                          "type":  "string"
+                                                                                      },
+                                                                        "duracion":  {
+                                                                                         "type":  "string"
+                                                                                     }
+                                                                    }
+                                                 },
+                                       "AreaProtegida":  {
+                                                             "type":  "object",
+                                                             "properties":  {
+                                                                                "id":  {
+                                                                                           "type":  "string"
+                                                                                       },
+                                                                                "nombre":  {
+                                                                                               "type":  "string"
+                                                                                           },
+                                                                                "tipo":  {
+                                                                                             "type":  "string"
+                                                                                         },
+                                                                                "descripcion":  {
+                                                                                                    "type":  "string"
+                                                                                                },
+                                                                                "ubicacion":  {
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                                "superficie":  {
+                                                                                                   "type":  "string"
+                                                                                               },
+                                                                                "imagen":  {
+                                                                                               "type":  "string"
+                                                                                           },
+                                                                                "latitud":  {
+                                                                                                "type":  "number"
+                                                                                            },
+                                                                                "longitud":  {
+                                                                                                 "type":  "number"
+                                                                                             }
+                                                                            }
+                                                         },
+                                       "Medida":  {
+                                                      "type":  "object",
+                                                      "properties":  {
+                                                                         "id":  {
+                                                                                    "type":  "string"
+                                                                                },
+                                                                         "titulo":  {
+                                                                                        "type":  "string"
+                                                                                    },
+                                                                         "descripcion":  {
+                                                                                             "type":  "string"
+                                                                                         },
+                                                                         "categoria":  {
+                                                                                           "type":  "string"
+                                                                                       },
+                                                                         "icono":  {
+                                                                                       "type":  "string"
+                                                                                   }
+                                                                     }
+                                                  },
+                                       "Miembro":  {
+                                                       "type":  "object",
+                                                       "properties":  {
+                                                                          "id":  {
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                          "nombre":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                          "cargo":  {
+                                                                                        "type":  "string"
+                                                                                    },
+                                                                          "departamento":  {
+                                                                                               "type":  "string"
+                                                                                           },
+                                                                          "foto":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                          "biografia":  {
+                                                                                            "type":  "string"
+                                                                                        },
+                                                                          "orden":  {
+                                                                                        "type":  "integer"
+                                                                                    }
+                                                                      }
+                                                   },
+                                       "Normativa":  {
+                                                         "type":  "object",
+                                                         "properties":  {
+                                                                            "id":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                            "titulo":  {
+                                                                                           "type":  "string"
+                                                                                       },
+                                                                            "tipo":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                            "numero":  {
+                                                                                           "type":  "string"
+                                                                                       },
+                                                                            "fecha_publicacion":  {
+                                                                                                      "type":  "string",
+                                                                                                      "format":  "date"
+                                                                                                  },
+                                                                            "descripcion":  {
+                                                                                                "type":  "string"
+                                                                                            },
+                                                                            "url_documento":  {
+                                                                                                  "type":  "string"
+                                                                                              }
+                                                                        }
+                                                     },
+                                       "Reporte":  {
+                                                       "type":  "object",
+                                                       "properties":  {
+                                                                          "id":  {
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                          "codigo":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                          "titulo":  {
+                                                                                         "type":  "string"
+                                                                                     },
+                                                                          "descripcion":  {
+                                                                                              "type":  "string"
+                                                                                          },
+                                                                          "foto":  {
+                                                                                       "type":  "string"
+                                                                                   },
+                                                                          "latitud":  {
+                                                                                          "type":  "number"
+                                                                                      },
+                                                                          "longitud":  {
+                                                                                           "type":  "number"
+                                                                                       },
+                                                                          "estado":  {
+                                                                                         "type":  "string",
+                                                                                         "enum":  [
+                                                                                                      "pendiente",
+                                                                                                      "en_revision",
+                                                                                                      "atendido",
+                                                                                                      "cerrado"
+                                                                                                  ]
+                                                                                     },
+                                                                          "comentario_ministerio":  {
+                                                                                                        "type":  "string",
+                                                                                                        "nullable":  true
+                                                                                                    },
+                                                                          "fecha":  {
+                                                                                        "type":  "string",
+                                                                                        "format":  "date-time"
+                                                                                    }
+                                                                      }
+                                                   }
+                                   },
+                       "responses":  {
+                                         "BadRequest":  {
+                                                            "description":  "Solicitud incorrecta",
+                                                            "content":  {
+                                                                            "application/json":  {
+                                                                                                     "schema":  {
+                                                                                                                    "type":  "object",
+                                                                                                                    "properties":  {
+                                                                                                                                       "error":  {
+                                                                                                                                                     "type":  "string"
+                                                                                                                                                 }
+                                                                                                                                   }
+                                                                                                                }
+                                                                                                 }
+                                                                        }
+                                                        },
+                                         "Unauthorized":  {
+                                                              "description":  "No autorizado",
+                                                              "content":  {
+                                                                              "application/json":  {
+                                                                                                       "schema":  {
+                                                                                                                      "type":  "object",
+                                                                                                                      "properties":  {
+                                                                                                                                         "error":  {
+                                                                                                                                                       "type":  "string"
+                                                                                                                                                   }
+                                                                                                                                     }
+                                                                                                                  }
+                                                                                                   }
+                                                                          }
+                                                          },
+                                         "Forbidden":  {
+                                                           "description":  "Prohibido",
+                                                           "content":  {
+                                                                           "application/json":  {
+                                                                                                    "schema":  {
+                                                                                                                   "type":  "object",
+                                                                                                                   "properties":  {
+                                                                                                                                      "error":  {
+                                                                                                                                                    "type":  "string"
+                                                                                                                                                }
+                                                                                                                                  }
+                                                                                                               }
+                                                                                                }
+                                                                       }
+                                                       },
+                                         "NotFound":  {
+                                                          "description":  "No encontrado",
+                                                          "content":  {
+                                                                          "application/json":  {
+                                                                                                   "schema":  {
+                                                                                                                  "type":  "object",
+                                                                                                                  "properties":  {
+                                                                                                                                     "error":  {
+                                                                                                                                                   "type":  "string"
+                                                                                                                                               }
+                                                                                                                                 }
+                                                                                                              }
+                                                                                               }
+                                                                      }
+                                                      },
+                                         "Conflict":  {
+                                                          "description":  "Conflicto",
+                                                          "content":  {
+                                                                          "application/json":  {
+                                                                                                   "schema":  {
+                                                                                                                  "type":  "object",
+                                                                                                                  "properties":  {
+                                                                                                                                     "error":  {
+                                                                                                                                                   "type":  "string"
+                                                                                                                                               }
+                                                                                                                                 }
+                                                                                                              }
+                                                                                               }
+                                                                      }
+                                                      }
+                                     }
+                   }
+}

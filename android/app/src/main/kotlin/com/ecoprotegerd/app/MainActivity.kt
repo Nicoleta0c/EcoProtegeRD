@@ -1,4 +1,4 @@
-package do.gob.medioambienterd.medioambienterd
+package com.ecoprotegerd.app
 
 import io.flutter.embedding.android.FlutterActivity
 
