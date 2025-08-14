@@ -134,20 +134,34 @@ class _NoticiasPageState extends State<NoticiasPage> {
     // Función para obtener una imagen por defecto basada en el contenido de la noticia
     String _getDefaultImageForNoticia(String? titulo, String? resumen) {
       final content = '${titulo ?? ''} ${resumen ?? ''}'.toLowerCase();
-      
-      if (content.contains('reciclaje') || content.contains('residuo') || content.contains('basura')) {
+
+      if (content.contains('reciclaje') ||
+          content.contains('residuo') ||
+          content.contains('basura')) {
         return 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600';
-      } else if (content.contains('agua') || content.contains('mar') || content.contains('oceano')) {
+      } else if (content.contains('agua') ||
+          content.contains('mar') ||
+          content.contains('oceano')) {
         return 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600';
-      } else if (content.contains('bosque') || content.contains('arbol') || content.contains('forestal')) {
+      } else if (content.contains('bosque') ||
+          content.contains('arbol') ||
+          content.contains('forestal')) {
         return 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600';
-      } else if (content.contains('energia') || content.contains('solar') || content.contains('renovable')) {
+      } else if (content.contains('energia') ||
+          content.contains('solar') ||
+          content.contains('renovable')) {
         return 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600';
-      } else if (content.contains('animal') || content.contains('fauna') || content.contains('biodiversidad')) {
+      } else if (content.contains('animal') ||
+          content.contains('fauna') ||
+          content.contains('biodiversidad')) {
         return 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=600';
-      } else if (content.contains('clima') || content.contains('cambio') || content.contains('calentamiento')) {
+      } else if (content.contains('clima') ||
+          content.contains('cambio') ||
+          content.contains('calentamiento')) {
         return 'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=600';
-      } else if (content.contains('contaminacion') || content.contains('humo') || content.contains('industrial')) {
+      } else if (content.contains('contaminacion') ||
+          content.contains('humo') ||
+          content.contains('industrial')) {
         return 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=600';
       } else {
         return 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600';
@@ -155,9 +169,10 @@ class _NoticiasPageState extends State<NoticiasPage> {
     }
 
     // Determinar qué imagen usar
-    String imageUrl = noticia.imagen != null && noticia.imagen!.isNotEmpty 
-        ? noticia.imagen! 
-        : _getDefaultImageForNoticia(noticia.titulo, noticia.resumen);
+    String imageUrl =
+        noticia.imagen != null && noticia.imagen!.isNotEmpty
+            ? noticia.imagen!
+            : _getDefaultImageForNoticia(noticia.titulo, noticia.resumen);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -203,11 +218,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.article,
-                          size: 48,
-                          color: Color(0xFF2E7D32),
-                        ),
+                        Icon(Icons.article, size: 48, color: Color(0xFF2E7D32)),
                         SizedBox(height: 8),
                         Text(
                           'Noticia Ambiental',

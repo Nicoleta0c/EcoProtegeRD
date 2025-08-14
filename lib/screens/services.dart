@@ -117,10 +117,11 @@ class _ServicesPageState extends State<ServicesPage> {
   Widget _buildServiceCard(Service service) {
     // Función para obtener una imagen por defecto basada en el nombre del servicio
     String _getDefaultImageForService(String? serviceName) {
-      if (serviceName == null) return 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600';
-      
+      if (serviceName == null)
+        return 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600';
+
       final name = serviceName.toLowerCase();
-      
+
       if (name.contains('reciclaje') || name.contains('residuo')) {
         return 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600';
       } else if (name.contains('agua') || name.contains('hidrico')) {
@@ -141,9 +142,10 @@ class _ServicesPageState extends State<ServicesPage> {
     }
 
     // Determinar qué imagen usar
-    String imageUrl = service.imagen != null && service.imagen!.isNotEmpty 
-        ? service.imagen! 
-        : _getDefaultImageForService(service.nombre);
+    String imageUrl =
+        service.imagen != null && service.imagen!.isNotEmpty
+            ? service.imagen!
+            : _getDefaultImageForService(service.nombre);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -189,11 +191,7 @@ class _ServicesPageState extends State<ServicesPage> {
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.eco,
-                          size: 48,
-                          color: Color(0xFF2E7D32),
-                        ),
+                        Icon(Icons.eco, size: 48, color: Color(0xFF2E7D32)),
                         SizedBox(height: 8),
                         Text(
                           'Servicio Ambiental',
