@@ -32,7 +32,6 @@ class _HomePageState extends State<HomePage> {
         _isLoadingSlider = false;
       });
     } catch (e) {
-      // En caso de error, usar contenido predeterminado
       setState(() {
         sliderContent = _getDefaultSliderContent();
         _isLoadingSlider = false;
@@ -114,7 +113,6 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 24),
 
-            // Información adicional
             _buildInfoSection(),
           ],
         ),
@@ -270,7 +268,6 @@ class _HomePageState extends State<HomePage> {
   Widget _buildQuickNavigationCards() {
     return Column(
       children: [
-        // Primera fila - módulos originales
         Row(
           children: [
             Expanded(
@@ -293,7 +290,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         const SizedBox(height: 12),
-        // Segunda fila - nuevos módulos
+
         Row(
           children: [
             Expanded(

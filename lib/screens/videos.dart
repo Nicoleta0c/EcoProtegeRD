@@ -672,6 +672,7 @@ class _VideoPlayerDialogState extends State<VideoPlayerDialog> {
                                 ElevatedButton.icon(
                                   onPressed: () async {
                                     if (widget.video.url != null) {
+                                      final navigator = Navigator.of(context);
                                       try {
                                         final Uri url = Uri.parse(
                                           widget.video.url!,
@@ -682,7 +683,9 @@ class _VideoPlayerDialogState extends State<VideoPlayerDialog> {
                                             mode:
                                                 LaunchMode.externalApplication,
                                           );
-                                          Navigator.of(context).pop();
+                                          if (mounted) {
+                                            navigator.pop();
+                                          }
                                         }
                                       } catch (e) {
                                         // Error handling

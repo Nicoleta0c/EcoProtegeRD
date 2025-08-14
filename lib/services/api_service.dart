@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart'; // Para detectar plataforma
+import 'package:flutter/foundation.dart';
 import '../models/service.dart';
 import '../models/noticia.dart';
 import '../models/video.dart';
@@ -69,17 +69,13 @@ class ApiService {
     ];
   }
 
-  // Servicios por defecto en caso de error del API
-  // Obtener información del ministerio
   static Future<Map<String, dynamic>> getMinistryInfo() async {
-    // En web, usar datos locales para evitar CORS
     if (kIsWeb) {
       await Future.delayed(const Duration(milliseconds: 500));
       return _getMinistryData();
     }
 
     try {
-      // En móvil, intentar usar el endpoint real
       await Future.delayed(const Duration(milliseconds: 500));
       return _getMinistryData();
     } catch (e) {
@@ -98,9 +94,7 @@ class ApiService {
     };
   }
 
-  // Obtener noticias o contenido para el slider
   static Future<List<Map<String, dynamic>>> getSliderContent() async {
-    // En web, usar datos locales para evitar CORS
     if (kIsWeb) {
       await Future.delayed(const Duration(milliseconds: 500));
       return _getDefaultSliderContent();
@@ -115,7 +109,6 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> newsData = json.decode(response.body);
 
-        // Convertir noticias a formato compatible con slider
         return newsData
             .map(
               (item) => {
@@ -140,7 +133,6 @@ class ApiService {
     }
   }
 
-  // Contenido por defecto para el slider
   static List<Map<String, dynamic>> _getDefaultSliderContent() {
     return [
       {
@@ -174,9 +166,7 @@ class ApiService {
     ];
   }
 
-  // Obtener noticias ambientales
   static Future<List<Noticia>> getNoticias() async {
-    // En web, usar datos locales para evitar CORS
     if (kIsWeb) {
       await Future.delayed(const Duration(milliseconds: 500));
       return _getDefaultNoticias();
@@ -199,16 +189,13 @@ class ApiService {
     }
   }
 
-  // Obtener videos educativos
   static Future<List<Video>> getVideos() async {
-    // En web, usar datos locales para evitar CORS
     if (kIsWeb) {
       await Future.delayed(const Duration(milliseconds: 500));
       return _getDefaultVideos();
     }
 
     try {
-      // Solo obtener videos de reciclaje ya que es la única categoría con datos
       final response = await http.get(
         Uri.parse('$baseUrl/videos?categoria=reciclaje'),
         headers: {'Accept': 'application/json'},
@@ -218,10 +205,9 @@ class ApiService {
         final List<dynamic> videosData = json.decode(response.body);
         final videos = videosData.map((json) => Video.fromJson(json)).toList();
 
-        // Para manejar videos duplicados de la API, les asignamos IDs únicos
         for (int i = 0; i < videos.length; i++) {
           videos[i] = Video(
-            id: '${videos[i].id}_$i', // Hacer ID único agregando índice
+            id: '${videos[i].id}_$i',
             titulo: videos[i].titulo,
             descripcion: videos[i].descripcion,
             url: videos[i].url,
@@ -232,16 +218,13 @@ class ApiService {
           );
         }
 
-        // Si se obtuvieron videos de la API, devolverlos
         if (videos.isNotEmpty) {
           return videos;
         }
       }
 
-      // Si no hay videos de la API, usar datos por defecto
       return _getDefaultVideos();
     } catch (e) {
-      print('Error obteniendo videos: $e');
       return _getDefaultVideos();
     }
   }

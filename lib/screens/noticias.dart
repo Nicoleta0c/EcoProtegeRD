@@ -132,7 +132,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
 
   Widget _buildNoticiaCard(Noticia noticia) {
     // Función para obtener una imagen por defecto basada en el contenido de la noticia
-    String _getDefaultImageForNoticia(String? titulo, String? resumen) {
+    String getDefaultImageForNoticia(String? titulo, String? resumen) {
       final content = '${titulo ?? ''} ${resumen ?? ''}'.toLowerCase();
 
       if (content.contains('reciclaje') ||
@@ -172,7 +172,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
     String imageUrl =
         noticia.imagen != null && noticia.imagen!.isNotEmpty
             ? noticia.imagen!
-            : _getDefaultImageForNoticia(noticia.titulo, noticia.resumen);
+            : getDefaultImageForNoticia(noticia.titulo, noticia.resumen);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),

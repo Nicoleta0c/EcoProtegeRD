@@ -116,9 +116,10 @@ class _ServicesPageState extends State<ServicesPage> {
 
   Widget _buildServiceCard(Service service) {
     // Función para obtener una imagen por defecto basada en el nombre del servicio
-    String _getDefaultImageForService(String? serviceName) {
-      if (serviceName == null)
+    String getDefaultImageForService(String? serviceName) {
+      if (serviceName == null) {
         return 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600';
+      }
 
       final name = serviceName.toLowerCase();
 
@@ -145,7 +146,7 @@ class _ServicesPageState extends State<ServicesPage> {
     String imageUrl =
         service.imagen != null && service.imagen!.isNotEmpty
             ? service.imagen!
-            : _getDefaultImageForService(service.nombre);
+            : getDefaultImageForService(service.nombre);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),

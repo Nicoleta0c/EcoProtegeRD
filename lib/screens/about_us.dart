@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 import '../services/api_service.dart';
 import '../widgets/custom_drawer.dart';
 
@@ -11,7 +10,6 @@ class AboutUsPage extends StatefulWidget {
 }
 
 class _AboutUsPageState extends State<AboutUsPage> {
-  VideoPlayerController? _videoController;
   Map<String, dynamic>? ministryInfo;
   bool _isLoading = true;
   String? _error;
@@ -20,13 +18,10 @@ class _AboutUsPageState extends State<AboutUsPage> {
   void initState() {
     super.initState();
     _loadMinistryInfo();
-    // Comentamos la inicialización del video para evitar errores CORS
-    // _initializeVideo();
   }
 
   @override
   void dispose() {
-    _videoController?.dispose();
     super.dispose();
   }
 
@@ -43,18 +38,6 @@ class _AboutUsPageState extends State<AboutUsPage> {
         _isLoading = false;
       });
     }
-  }
-
-  void _initializeVideo() {
-    // URL de video de ejemplo - reemplazar con video real del ministerio
-    _videoController = VideoPlayerController.networkUrl(
-        Uri.parse(
-          'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-        ),
-      )
-      ..initialize().then((_) {
-        setState(() {});
-      });
   }
 
   @override
