@@ -48,6 +48,17 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.home,
             title: 'Inicio',
             route: AppRoutes.home,
+          ),_buildDrawerItem(
+            context,
+            icon: Icons.login,
+            title: 'Login',
+            route: AppRoutes.Login,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.app_registration_rounded,
+            title: 'Register',
+            route: AppRoutes.Register,
           ),
           _buildDrawerItem(
             context,
@@ -88,7 +99,6 @@ class CustomDrawer extends StatelessWidget {
             title: const Text('Sitio Web'),
             subtitle: const Text('medioambiente.gob.do'),
             onTap: () {
-              // Aquí podrías agregar funcionalidad para abrir el sitio web
               Navigator.pop(context);
             },
           ),

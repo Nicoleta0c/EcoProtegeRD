@@ -4,6 +4,8 @@ import 'package:medioambienterd/screens/mainPage/about_us.dart';
 import 'package:medioambienterd/screens/Service/services.dart';
 import 'package:medioambienterd/screens/mainPage/noticias.dart';
 import 'package:medioambienterd/screens/mainPage/videos.dart';
+import 'package:medioambienterd/screens/Auth/login_screen.dart';
+import 'package:medioambienterd/screens/Auth/register_screen.dart';
 import 'routes.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -27,6 +29,14 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.videos,
       builder: (context, state) => const VideosPage(),
+    ),
+     GoRoute(
+      path: AppRoutes.Login,
+      builder: (context, state) => const LoginScreen(),
+    ),
+     GoRoute(
+      path: AppRoutes.Register,
+      builder: (context, state) => const RegisterScreen(),
     ),
   ],
 );
