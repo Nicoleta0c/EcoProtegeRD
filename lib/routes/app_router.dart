@@ -1,9 +1,9 @@
 import 'package:go_router/go_router.dart';
-import 'package:medioambienterd/screens/home.dart';
-import 'package:medioambienterd/screens/about_us.dart';
-import 'package:medioambienterd/screens/services.dart';
-import 'package:medioambienterd/screens/noticias.dart';
-import 'package:medioambienterd/screens/videos.dart';
+import 'package:medioambienterd/screens/mainPage/home.dart';
+import 'package:medioambienterd/screens/mainPage/about_us.dart';
+import 'package:medioambienterd/screens/Service/services.dart';
+import 'package:medioambienterd/screens/mainPage/noticias.dart';
+import 'package:medioambienterd/screens/mainPage/videos.dart';
 import 'routes.dart';
 
 final GoRouter appRouter = GoRouter(

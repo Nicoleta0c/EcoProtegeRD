@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../models/noticia.dart';
-import '../services/api_service.dart';
-import '../widgets/custom_drawer.dart';
+import '../../models/noticia.dart';
+import '../../services/api_service.dart';
+import '../../widgets/custom_drawer.dart';
 
 class NoticiasPage extends StatefulWidget {
   const NoticiasPage({super.key});

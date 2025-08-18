@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../models/service.dart';
-import '../services/api_service.dart';
-import '../widgets/custom_drawer.dart';
+import '../../models/service.dart';
+import '../../services/api_service.dart';
+import '../../widgets/custom_drawer.dart';
 
 class ServicesPage extends StatefulWidget {
   const ServicesPage({super.key});

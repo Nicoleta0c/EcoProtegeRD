@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../models/video.dart';
-import '../services/api_service.dart';
-import '../widgets/custom_drawer.dart';
+import '../../models/video.dart';
+import '../../services/api_service.dart';
+import '../../widgets/custom_drawer.dart';
 
 class VideosPage extends StatefulWidget {
   const VideosPage({super.key});

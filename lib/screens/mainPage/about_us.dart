@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';
-import '../widgets/custom_drawer.dart';
+import '../../services/api_service.dart';
+import '../../widgets/custom_drawer.dart';
 
 class AboutUsPage extends StatefulWidget {
   const AboutUsPage({super.key});

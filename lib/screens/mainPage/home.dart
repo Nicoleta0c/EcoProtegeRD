@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
-import '../services/api_service.dart';
-import '../routes/routes.dart';
-import '../widgets/custom_drawer.dart';
+import '../../services/api_service.dart';
+import '../../routes/routes.dart';
+import '../../widgets/custom_drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
