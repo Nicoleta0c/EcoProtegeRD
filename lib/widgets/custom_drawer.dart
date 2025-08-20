@@ -48,7 +48,8 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.home,
             title: 'Inicio',
             route: AppRoutes.home,
-          ),_buildDrawerItem(
+          ),
+          _buildDrawerItem(
             context,
             icon: Icons.login,
             title: 'Login',
@@ -60,6 +61,7 @@ class CustomDrawer extends StatelessWidget {
             title: 'Register',
             route: AppRoutes.Register,
           ),
+          const Divider(),
           _buildDrawerItem(
             context,
             icon: Icons.info,
@@ -72,6 +74,32 @@ class CustomDrawer extends StatelessWidget {
             title: 'Servicios',
             route: AppRoutes.services,
           ),
+          const Divider(),
+          _buildDrawerItem(
+            context,
+            icon: Icons.nature,
+            title: 'Áreas Protegidas',
+            route: AppRoutes.areasProtegidas,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.eco,
+            title: 'Medidas Ambientales',
+            route: AppRoutes.medidasAmbientales,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.people,
+            title: 'Equipo Ministerial',
+            route: AppRoutes.equipoMinisterio,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.volunteer_activism,
+            title: 'Voluntariado',
+            route: AppRoutes.voluntariado,
+          ),
+          const Divider(),
           _buildDrawerItem(
             context,
             icon: Icons.article,
@@ -83,6 +111,13 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.video_library,
             title: 'Videos Educativos',
             route: AppRoutes.videos,
+          ),
+          const Divider(),
+          _buildDrawerItem(
+            context,
+            icon: Icons.info_outline,
+            title: 'Acerca de',
+            route: AppRoutes.acercaDe,
           ),
           const Divider(),
           ListTile(

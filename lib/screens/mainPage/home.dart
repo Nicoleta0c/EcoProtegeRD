@@ -268,6 +268,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildQuickNavigationCards() {
     return Column(
       children: [
+        // First row - Original cards
         Row(
           children: [
             Expanded(
@@ -291,6 +292,7 @@ class _HomePageState extends State<HomePage> {
         ),
         const SizedBox(height: 12),
 
+        // Second row - Original cards
         Row(
           children: [
             Expanded(
@@ -308,6 +310,54 @@ class _HomePageState extends State<HomePage> {
                 description: 'Videos educativos',
                 icon: Icons.play_circle_outline,
                 onTap: () => context.go(AppRoutes.videos),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Third row - New areas protegidas and medidas
+        Row(
+          children: [
+            Expanded(
+              child: _buildNavigationCard(
+                title: 'Áreas Protegidas',
+                description: 'Parques y reservas',
+                icon: Icons.nature_outlined,
+                onTap: () => context.go(AppRoutes.areasProtegidas),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildNavigationCard(
+                title: 'Medidas Ambientales',
+                description: 'Guías para cuidar el ambiente',
+                icon: Icons.eco_outlined,
+                onTap: () => context.go(AppRoutes.medidasAmbientales),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Fourth row - New team and volunteer cards
+        Row(
+          children: [
+            Expanded(
+              child: _buildNavigationCard(
+                title: 'Equipo Ministerial',
+                description: 'Conoce nuestro equipo',
+                icon: Icons.people_outline,
+                onTap: () => context.go(AppRoutes.equipoMinisterio),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildNavigationCard(
+                title: 'Voluntariado',
+                description: 'Únete a nosotros',
+                icon: Icons.volunteer_activism_outlined,
+                onTap: () => context.go(AppRoutes.voluntariado),
               ),
             ),
           ],

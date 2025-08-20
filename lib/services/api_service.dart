@@ -4,6 +4,10 @@ import 'package:flutter/foundation.dart';
 import '../models/service.dart';
 import '../models/noticia.dart';
 import '../models/video.dart';
+import '../models/area_protegida.dart';
+import '../models/medida_ambiental.dart';
+import '../models/equipo_ministerio.dart';
+import '../models/voluntario.dart';
 
 class ApiService {
   static const String baseUrl = 'https://adamix.net/medioambiente';
@@ -377,5 +381,215 @@ class ApiService {
         fechaSubida: '2025-01-05 10:00:00',
       ),
     ];
+  }
+
+  // Obtener áreas protegidas
+  static Future<List<AreaProtegida>> getAreasProtegidas() async {
+    if (kIsWeb) {
+      return _getDefaultAreasProtegidas();
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/areas_protegidas'),
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> areasData = json.decode(response.body);
+        return areasData.map((json) => AreaProtegida.fromJson(json)).toList();
+      } else {
+        return _getDefaultAreasProtegidas();
+      }
+    } catch (e) {
+      return _getDefaultAreasProtegidas();
+    }
+  }
+
+  static List<AreaProtegida> _getDefaultAreasProtegidas() {
+    return [
+      AreaProtegida(
+        id: '001',
+        nombre: 'Parque Nacional Los Haitises',
+        descripcion: 'Parque nacional ubicado en la región noreste de República Dominicana.',
+        ubicacion: 'Provincia de Hato Mayor',
+        latitud: 19.0528,
+        longitud: -69.4217,
+        categoria: 'Parque Nacional',
+        tamano: '1,600 km²',
+        fechaCreacion: '2025-01-01',
+      ),
+      AreaProtegida(
+        id: '002',
+        nombre: 'Parque Nacional del Este',
+        descripcion: 'Parque nacional en la región sureste de la República Dominicana.',
+        ubicacion: 'Provincia de La Altagracia',
+        latitud: 18.3333,
+        longitud: -68.8167,
+        categoria: 'Parque Nacional',
+        tamano: '420 km²',
+        fechaCreacion: '2025-01-01',
+      ),
+    ];
+  }
+
+  // Obtener medidas ambientales
+  static Future<List<MedidaAmbiental>> getMedidasAmbientales() async {
+    if (kIsWeb) {
+      return _getDefaultMedidasAmbientales();
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/medidas'),
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> medidasData = json.decode(response.body);
+        return medidasData.map((json) => MedidaAmbiental.fromJson(json)).toList();
+      } else {
+        return _getDefaultMedidasAmbientales();
+      }
+    } catch (e) {
+      return _getDefaultMedidasAmbientales();
+    }
+  }
+
+  static List<MedidaAmbiental> _getDefaultMedidasAmbientales() {
+    return [
+      MedidaAmbiental(
+        id: '001',
+        titulo: 'Reducir el Consumo de Plástico',
+        descripcion: 'Medidas para disminuir el uso de plásticos de un solo uso.',
+        contenido: 'El plástico es uno de los principales contaminantes del medio ambiente...',
+        categoria: 'Contaminación',
+        fechaCreacion: '2025-01-01',
+      ),
+      MedidaAmbiental(
+        id: '002',
+        titulo: 'Ahorro de Energía',
+        descripcion: 'Consejos para reducir el consumo energético en el hogar.',
+        contenido: 'El ahorro de energía es fundamental para reducir nuestra huella de carbono...',
+        categoria: 'Energía',
+        fechaCreacion: '2025-01-01',
+      ),
+    ];
+  }
+
+  // Obtener equipo del ministerio
+  static Future<List<EquipoMinisterio>> getEquipoMinisterio() async {
+    if (kIsWeb) {
+      return _getDefaultEquipoMinisterio();
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/equipo'),
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> equipoData = json.decode(response.body);
+        return equipoData.map((json) => EquipoMinisterio.fromJson(json)).toList();
+      } else {
+        return _getDefaultEquipoMinisterio();
+      }
+    } catch (e) {
+      return _getDefaultEquipoMinisterio();
+    }
+  }
+
+  static List<EquipoMinisterio> _getDefaultEquipoMinisterio() {
+    return [
+      EquipoMinisterio(
+        id: '001',
+        nombre: 'María',
+        apellido: 'González',
+        cargo: 'Ministra de Medio Ambiente',
+        telefono: '809-555-0101',
+        email: 'mgonzalez@medioambiente.gob.do',
+        departamento: 'Dirección General',
+        fechaCreacion: '2025-01-01',
+      ),
+      EquipoMinisterio(
+        id: '002',
+        nombre: 'Carlos',
+        apellido: 'Rodríguez',
+        cargo: 'Director de Áreas Protegidas',
+        telefono: '809-555-0102',
+        email: 'crodriguez@medioambiente.gob.do',
+        departamento: 'Áreas Protegidas',
+        fechaCreacion: '2025-01-01',
+      ),
+    ];
+  }
+
+  // Obtener información de voluntariado
+  static Future<VoluntariadoInfo> getVoluntariadoInfo() async {
+    if (kIsWeb) {
+      return _getDefaultVoluntariadoInfo();
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/voluntariado'),
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return VoluntariadoInfo.fromJson(data);
+      } else {
+        return _getDefaultVoluntariadoInfo();
+      }
+    } catch (e) {
+      return _getDefaultVoluntariadoInfo();
+    }
+  }
+
+  static VoluntariadoInfo _getDefaultVoluntariadoInfo() {
+    return VoluntariadoInfo(
+      titulo: 'Programa de Voluntariado Ambiental',
+      descripcion: 'Únete a nuestro programa de voluntariado y contribuye a la protección del medio ambiente en República Dominicana.',
+      requisitos: [
+        'Ser mayor de 18 años',
+        'Tener disponibilidad de al menos 4 horas semanales',
+        'Compromiso con la conservación ambiental',
+        'Disponibilidad para participar en actividades de campo',
+      ],
+      contacto: 'voluntariado@medioambiente.gob.do',
+    );
+  }
+
+  // Registrar voluntario
+  static Future<Map<String, dynamic>> registrarVoluntario(Voluntario voluntario) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/voluntarios'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: json.encode(voluntario.toJson()),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'success': true,
+          'message': 'Registro exitoso. Te contactaremos pronto.',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Error en el registro. Intenta nuevamente.',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error de conexión. Intenta nuevamente.',
+      };
+    }
   }
 }
