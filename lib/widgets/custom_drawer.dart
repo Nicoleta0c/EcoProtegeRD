@@ -102,6 +102,25 @@ class CustomDrawer extends StatelessWidget {
           const Divider(),
           _buildDrawerItem(
             context,
+            icon: Icons.report_problem,
+            title: 'Reportar Daño Ambiental',
+            route: AppRoutes.reportDamage,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.assignment,
+            title: 'Mis Reportes',
+            route: AppRoutes.myReports,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.map,
+            title: 'Mapa de Reportes',
+            route: AppRoutes.reportsMap,
+          ),
+          const Divider(),
+          _buildDrawerItem(
+            context,
             icon: Icons.article,
             title: 'Noticias Ambientales',
             route: AppRoutes.noticias,
