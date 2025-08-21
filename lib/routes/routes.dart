@@ -15,4 +15,7 @@ class AppRoutes {
   static const String voluntariado = '/voluntariado';
   static const String registroVoluntario = '/registro-voluntario';
   static const String acercaDe = '/acerca-de';
+  static const String reportDamage = '/report-damage';
+  static const String myReports = '/my-reports';
+
 }

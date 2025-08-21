@@ -592,4 +592,90 @@ class ApiService {
       };
     }
   }
+
+
+  // Obtener los reportes del usuario
+static Future<List<Map<String, dynamic>>> getReports(String token) async {
+  try {
+    final response = await http.get(
+      Uri.parse('$baseUrl/reportes'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.cast<Map<String, dynamic>>();
+    } else {
+      return [];
+    }
+  } catch (e) {
+    return [];
+  }
+}
+
+
+static Future<Map<String, dynamic>> createReport({
+  required String token,
+  required String titulo,
+  required String descripcion,
+  required String foto,
+  required double latitud,
+  required double longitud,
+}) async {
+  try {
+    final url = Uri.parse('$baseUrl/reportes');
+
+    // Asegúrate de que la foto sea solo base64 sin prefijos
+    String cleanBase64 = foto;
+    if (foto.contains(',')) {
+      cleanBase64 = foto.split(',').last;
+    }
+
+    final bodyJson = json.encode({
+      'titulo': titulo,
+      'descripcion': descripcion,
+      'foto': cleanBase64,  // Usa el base64 limpio
+      'latitud': latitud,
+      'longitud': longitud,
+    });
+
+    print('--- DEBUG CREATE REPORT ---');
+    print('URL: $url');
+    print('Body: ${json.encode({
+      'titulo': titulo,
+      'descripcion': descripcion,
+      'foto': 'BASE64_STRING (${cleanBase64.length} caracteres)',
+      'latitud': latitud,
+      'longitud': longitud,
+    })}');
+    print('---------------------------');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: bodyJson,
+    );
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return {'success': true, 'data': json.decode(response.body)};
+    } else {
+      return {
+        'success': false,
+        'error': 'Failed to create report: ${response.statusCode}'
+      };
+    }
+  } catch (e) {
+    return {'success': false, 'error': e.toString()};
+  }
+}
 }

@@ -4,21 +4,23 @@ import '../utils/app_colors.dart';
 class CustomTextField extends StatefulWidget {
   final String label;
   final String hint;
-  final IconData icon;
+  final IconData? icon;
   final bool isPassword;
   final TextInputType keyboardType;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final int maxLines;
 
   const CustomTextField({
     Key? key,
     required this.label,
-    required this.hint,
-    required this.icon,
     required this.controller,
+    this.hint = '',
+    this.icon,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.maxLines = 1,
   }) : super(key: key);
 
   @override
@@ -47,12 +49,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
           obscureText: widget.isPassword ? _obscureText : false,
           keyboardType: widget.keyboardType,
           validator: widget.validator,
+          maxLines: widget.maxLines,
           decoration: InputDecoration(
             hintText: widget.hint,
-            prefixIcon: Icon(
-              widget.icon,
-              color: AppColors.primaryGreen,
-            ),
+            prefixIcon: widget.icon != null
+                ? Icon(widget.icon, color: AppColors.primaryGreen)
+                : null,
             suffixIcon: widget.isPassword
                 ? IconButton(
                     icon: Icon(

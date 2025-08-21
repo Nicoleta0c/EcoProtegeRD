@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../services/auth_service.dart';
 import '../../utils/app_colors.dart';
+import '../../utils/session.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_fiel.dart';
 import '../../routes/routes.dart';
@@ -47,14 +48,19 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
 
-      if (result['success']) {
+      if (result['success'] && result['data'] != null && result['data']['token'] != null) {
+        // Guardar token en Session
+        Session.login(result['data']['token']);
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Inicio de sesión exitoso'),
             backgroundColor: AppColors.success,
           ),
         );
-        context.go(AppRoutes.home);
+
+        // Redirigir a reportar daño ambiental
+        context.go(AppRoutes.reportDamage);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -63,6 +69,13 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Ocurrió un error: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -81,7 +94,6 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                 // const SizedBox(height: 10),
                   Center(
                     child: Column(
                       children: [
@@ -91,21 +103,29 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: BoxDecoration(
                             gradient: AppColors.primaryGradient,
                             borderRadius: BorderRadius.circular(25),
-                            boxShadow: [BoxShadow(color: AppColors.primaryGreen.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 10))],
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primaryGreen.withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              )
+                            ],
                           ),
                           child: const Icon(Icons.eco, size: 60, color: AppColors.white),
                         ),
                         const SizedBox(height: 24),
                         const Text(
                           'EcoProtegeRD',
-                          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.darkGreen),
+                          style: TextStyle(
+                              fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.darkGreen),
                           textAlign: TextAlign.center,
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 40),
-                  const Text('Iniciar Sesión', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+                  const Text('Iniciar Sesión',
+                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
                   const SizedBox(height: 40),
                   CustomTextField(
                     label: 'Correo Electronico',
@@ -129,7 +149,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {},
-                      child: const Text('¿Olvidaste tu contraseña?', style: TextStyle(color: AppColors.primaryGreen, fontWeight: FontWeight.w600)),
+                      child: const Text('¿Olvidaste tu contraseña?',
+                          style: TextStyle(color: AppColors.primaryGreen, fontWeight: FontWeight.w600)),
                     ),
                   ),
                   const SizedBox(height: 32),
