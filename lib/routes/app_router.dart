@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:medioambienterd/screens/Reports/my_reports_screen.dart';
 import 'package:medioambienterd/screens/Reports/report_damage_screen.dart';
+import 'package:medioambienterd/screens/Reports/reports_map_screen.dart';
 import 'package:medioambienterd/screens/mainPage/home.dart';
 import 'package:medioambienterd/screens/mainPage/about_us.dart';
 import 'package:medioambienterd/screens/Service/services.dart';
@@ -18,8 +19,6 @@ import 'package:medioambienterd/screens/Voluntariado/voluntariado_page.dart';
 import 'package:medioambienterd/screens/Voluntariado/registro_voluntario_page.dart';
 import 'package:medioambienterd/screens/AcercaDe/acerca_de_page.dart';
 import 'routes.dart';
-import 'package:medioambienterd/utils/session.dart';
-
 
 final GoRouter appRouter = GoRouter(
   routes: [
@@ -43,11 +42,11 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.videos,
       builder: (context, state) => const VideosPage(),
     ),
-     GoRoute(
+    GoRoute(
       path: AppRoutes.Login,
       builder: (context, state) => const LoginScreen(),
     ),
-     GoRoute(
+    GoRoute(
       path: AppRoutes.Register,
       builder: (context, state) => const RegisterScreen(),
     ),
@@ -93,29 +92,19 @@ final GoRouter appRouter = GoRouter(
       path: AppRoutes.acercaDe,
       builder: (context, state) => const AcercaDePage(),
     ),
-      GoRoute(
+    GoRoute(
       path: AppRoutes.reportDamage,
-      builder: (context, state) {
-        final token = Session.getToken();
-        if (token == null || token.isEmpty) {
-          return const LoginScreen();
-        }
-        return ReportDamageScreen(token: token);
-      },
+      builder: (context, state) => const ReportDamageScreen(),
     ),
 
-  GoRoute(
-    path: AppRoutes.myReports,
-    builder: (context, state) {
-      final token = Session.getToken();
-      if (token == null || token.isEmpty) {
-        return const LoginScreen();
-      }
-      return MyReportsScreen(token: token);
-    },
-  ),
+    GoRoute(
+      path: AppRoutes.myReports,
+      builder: (context, state) => const MyReportsScreen(),
+    ),
 
-
+    GoRoute(
+      path: AppRoutes.reportsMap,
+      builder: (context, state) => const ReportsMapScreen(),
+    ),
   ],
-
 );

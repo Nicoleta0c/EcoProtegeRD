@@ -4,7 +4,7 @@ class AppRoutes {
   static const String services = '/services';
   static const String noticias = '/noticias';
   static const String videos = '/videos';
-  static const String Login= '/login';
+  static const String Login = '/login';
   static const String Register = '/register';
   static const String areasProtegidas = '/areas-protegidas';
   static const String areaDetalle = '/area-detalle';
@@ -17,5 +17,5 @@ class AppRoutes {
   static const String acercaDe = '/acerca-de';
   static const String reportDamage = '/report-damage';
   static const String myReports = '/my-reports';
-
+  static const String reportsMap = '/reports-map';
 }

@@ -8,6 +8,7 @@ import '../models/area_protegida.dart';
 import '../models/medida_ambiental.dart';
 import '../models/equipo_ministerio.dart';
 import '../models/voluntario.dart';
+import 'local_database_service.dart';
 
 class ApiService {
   static const String baseUrl = 'https://adamix.net/medioambiente';
@@ -411,7 +412,8 @@ class ApiService {
       AreaProtegida(
         id: '001',
         nombre: 'Parque Nacional Los Haitises',
-        descripcion: 'Parque nacional ubicado en la región noreste de República Dominicana.',
+        descripcion:
+            'Parque nacional ubicado en la región noreste de República Dominicana.',
         ubicacion: 'Provincia de Hato Mayor',
         latitud: 19.0528,
         longitud: -69.4217,
@@ -422,7 +424,8 @@ class ApiService {
       AreaProtegida(
         id: '002',
         nombre: 'Parque Nacional del Este',
-        descripcion: 'Parque nacional en la región sureste de la República Dominicana.',
+        descripcion:
+            'Parque nacional en la región sureste de la República Dominicana.',
         ubicacion: 'Provincia de La Altagracia',
         latitud: 18.3333,
         longitud: -68.8167,
@@ -447,7 +450,9 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final List<dynamic> medidasData = json.decode(response.body);
-        return medidasData.map((json) => MedidaAmbiental.fromJson(json)).toList();
+        return medidasData
+            .map((json) => MedidaAmbiental.fromJson(json))
+            .toList();
       } else {
         return _getDefaultMedidasAmbientales();
       }
@@ -461,8 +466,10 @@ class ApiService {
       MedidaAmbiental(
         id: '001',
         titulo: 'Reducir el Consumo de Plástico',
-        descripcion: 'Medidas para disminuir el uso de plásticos de un solo uso.',
-        contenido: 'El plástico es uno de los principales contaminantes del medio ambiente...',
+        descripcion:
+            'Medidas para disminuir el uso de plásticos de un solo uso.',
+        contenido:
+            'El plástico es uno de los principales contaminantes del medio ambiente...',
         categoria: 'Contaminación',
         fechaCreacion: '2025-01-01',
       ),
@@ -470,7 +477,8 @@ class ApiService {
         id: '002',
         titulo: 'Ahorro de Energía',
         descripcion: 'Consejos para reducir el consumo energético en el hogar.',
-        contenido: 'El ahorro de energía es fundamental para reducir nuestra huella de carbono...',
+        contenido:
+            'El ahorro de energía es fundamental para reducir nuestra huella de carbono...',
         categoria: 'Energía',
         fechaCreacion: '2025-01-01',
       ),
@@ -491,7 +499,9 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final List<dynamic> equipoData = json.decode(response.body);
-        return equipoData.map((json) => EquipoMinisterio.fromJson(json)).toList();
+        return equipoData
+            .map((json) => EquipoMinisterio.fromJson(json))
+            .toList();
       } else {
         return _getDefaultEquipoMinisterio();
       }
@@ -551,7 +561,8 @@ class ApiService {
   static VoluntariadoInfo _getDefaultVoluntariadoInfo() {
     return VoluntariadoInfo(
       titulo: 'Programa de Voluntariado Ambiental',
-      descripcion: 'Únete a nuestro programa de voluntariado y contribuye a la protección del medio ambiente en República Dominicana.',
+      descripcion:
+          'Únete a nuestro programa de voluntariado y contribuye a la protección del medio ambiente en República Dominicana.',
       requisitos: [
         'Ser mayor de 18 años',
         'Tener disponibilidad de al menos 4 horas semanales',
@@ -563,7 +574,9 @@ class ApiService {
   }
 
   // Registrar voluntario
-  static Future<Map<String, dynamic>> registrarVoluntario(Voluntario voluntario) async {
+  static Future<Map<String, dynamic>> registrarVoluntario(
+    Voluntario voluntario,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/voluntarios'),
@@ -593,89 +606,148 @@ class ApiService {
     }
   }
 
-
   // Obtener los reportes del usuario
-static Future<List<Map<String, dynamic>>> getReports(String token) async {
-  try {
-    final response = await http.get(
-      Uri.parse('$baseUrl/reportes'),
-      headers: {
+  static Future<List<Map<String, dynamic>>> getReports([String? token]) async {
+    try {
+      // Si no hay token, devolver lista vacía
+      if (token == null || token.isEmpty) {
+        print('No token available for getReports - returning empty list');
+        return [];
+      }
+
+      // Preparar headers con token requerido
+      Map<String, String> headers = {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
-      },
-    );
+      };
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.cast<Map<String, dynamic>>();
-    } else {
+      final response = await http.get(
+        Uri.parse('$baseUrl/reportes'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.cast<Map<String, dynamic>>();
+      } else {
+        print(
+          'Error getting reports: ${response.statusCode} - ${response.body}',
+        );
+        return [];
+      }
+    } catch (e) {
+      print('Exception getting reports: $e');
       return [];
     }
-  } catch (e) {
-    return [];
   }
-}
 
+  static Future<Map<String, dynamic>> createReport({
+    String? token, // Mantener para compatibilidad pero ya no se usa
+    required String titulo,
+    required String descripcion,
+    required String foto,
+    required double latitud,
+    required double longitud,
+  }) async {
+    try {
+      // Validar que todos los campos requeridos no estén vacíos
+      if (titulo.trim().isEmpty) {
+        return {
+          'success': false,
+          'error': 'El título es requerido y no puede estar vacío',
+        };
+      }
 
-static Future<Map<String, dynamic>> createReport({
-  required String token,
-  required String titulo,
-  required String descripcion,
-  required String foto,
-  required double latitud,
-  required double longitud,
-}) async {
-  try {
-    final url = Uri.parse('$baseUrl/reportes');
+      if (descripcion.trim().isEmpty) {
+        return {
+          'success': false,
+          'error': 'La descripción es requerida y no puede estar vacía',
+        };
+      }
 
-    // Asegúrate de que la foto sea solo base64 sin prefijos
-    String cleanBase64 = foto;
-    if (foto.contains(',')) {
-      cleanBase64 = foto.split(',').last;
-    }
+      if (foto.trim().isEmpty) {
+        return {
+          'success': false,
+          'error': 'La foto es requerida y no puede estar vacía',
+        };
+      }
 
-    final bodyJson = json.encode({
-      'titulo': titulo,
-      'descripcion': descripcion,
-      'foto': cleanBase64,  // Usa el base64 limpio
-      'latitud': latitud,
-      'longitud': longitud,
-    });
+      if (latitud == 0.0) {
+        return {
+          'success': false,
+          'error': 'La latitud es requerida y no puede ser 0',
+        };
+      }
 
-    print('--- DEBUG CREATE REPORT ---');
-    print('URL: $url');
-    print('Body: ${json.encode({
-      'titulo': titulo,
-      'descripcion': descripcion,
-      'foto': 'BASE64_STRING (${cleanBase64.length} caracteres)',
-      'latitud': latitud,
-      'longitud': longitud,
-    })}');
-    print('---------------------------');
+      if (longitud == 0.0) {
+        return {
+          'success': false,
+          'error': 'La longitud es requerida y no puede ser 0',
+        };
+      }
 
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: bodyJson,
-    );
+      print('--- DEBUG CREATE REPORT LOCAL ---');
+      print('Titulo: "${titulo.trim()}" (length: ${titulo.trim().length})');
+      print(
+        'Descripcion: "${descripcion.trim()}" (length: ${descripcion.trim().length})',
+      );
+      print('Foto: BASE64_STRING (${foto.trim().length} caracteres)');
+      print('Latitud: $latitud');
+      print('Longitud: $longitud');
+      print('Guardando en base de datos local...');
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+      // Guardar en base de datos local
+      final reportId = await LocalDatabaseService.createReport(
+        titulo: titulo.trim(),
+        descripcion: descripcion.trim(),
+        foto: foto.trim(),
+        latitud: latitud,
+        longitud: longitud,
+        usuario:
+            'Usuario Local', // Puedes usar el token para determinar el usuario si es necesario
+      );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return {'success': true, 'data': json.decode(response.body)};
-    } else {
+      print('Reporte guardado con ID: $reportId');
+
+      return {
+        'success': true,
+        'data': {
+          'id': reportId,
+          'titulo': titulo.trim(),
+          'descripcion': descripcion.trim(),
+          'latitud': latitud,
+          'longitud': longitud,
+          'message': 'Reporte creado exitosamente de forma local',
+        },
+      };
+    } catch (e) {
+      print('Error al guardar reporte local: $e');
       return {
         'success': false,
-        'error': 'Failed to create report: ${response.statusCode}'
+        'error': 'Error al guardar el reporte: ${e.toString()}',
       };
     }
-  } catch (e) {
-    return {'success': false, 'error': e.toString()};
   }
-}
+
+  // Nuevo método para obtener reportes locales
+  static Future<List<Map<String, dynamic>>> getLocalReports() async {
+    try {
+      return await LocalDatabaseService.getAllReports();
+    } catch (e) {
+      print('Error al obtener reportes locales: $e');
+      return [];
+    }
+  }
+
+  // Nuevo método para obtener reportes por usuario
+  static Future<List<Map<String, dynamic>>> getReportsByUser(
+    String usuario,
+  ) async {
+    try {
+      return await LocalDatabaseService.getReportsByUser(usuario);
+    } catch (e) {
+      print('Error al obtener reportes del usuario: $e');
+      return [];
+    }
+  }
 }

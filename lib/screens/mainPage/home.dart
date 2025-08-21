@@ -42,32 +42,46 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> _getDefaultSliderContent() {
     return [
       {
-        'titulo': 'Protege el Medio Ambiente',
+        'titulo': 'Parques Nacionales de RD',
         'descripcion':
-            'Juntos podemos construir un futuro más verde y sostenible para las próximas generaciones.',
+            'Descubre las maravillas naturales protegidas de República Dominicana y su biodiversidad única.',
         'imagen':
-            'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop',
       },
       {
-        'titulo': 'Conservación de la Biodiversidad',
+        'titulo': 'Conservación Marina',
         'descripcion':
-            'Trabajamos para proteger la rica biodiversidad de República Dominicana.',
+            'Protegemos nuestros arrecifes de coral y ecosistemas marinos del Caribe dominicano.',
         'imagen':
-            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
+            'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&h=600&fit=crop',
       },
       {
-        'titulo': 'Desarrollo Sostenible',
+        'titulo': 'Reforestación Nacional',
         'descripcion':
-            'Promovemos prácticas que equilibren el crecimiento económico con la protección ambiental.',
+            'Iniciativas de reforestación para recuperar nuestros bosques tropicales y combatir el cambio climático.',
         'imagen':
-            'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?w=800',
+            'https://images.unsplash.com/photo-1574263867128-a3c4534f0b4c?w=1200&h=600&fit=crop',
       },
       {
-        'titulo': 'Recursos Naturales',
+        'titulo': 'Energías Renovables',
         'descripcion':
-            'Gestionamos responsablemente nuestros recursos naturales para el bienestar de todos.',
+            'Promovemos el uso de energía solar y eólica para un futuro energético sostenible.',
         'imagen':
-            'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800',
+            'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200&h=600&fit=crop',
+      },
+      {
+        'titulo': 'Biodiversidad Endémica',
+        'descripcion':
+            'Protegemos las especies únicas de La Española: iguanas, hutías, y aves endémicas.',
+        'imagen':
+            'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=600&fit=crop',
+      },
+      {
+        'titulo': 'Gestión de Residuos',
+        'descripcion':
+            'Programas de reciclaje y manejo responsable de desechos para ciudades más limpias.',
+        'imagen':
+            'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&h=600&fit=crop',
       },
     ];
   }
@@ -113,6 +127,10 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 24),
 
+            _buildQuickStats(),
+
+            const SizedBox(height: 24),
+
             _buildInfoSection(),
           ],
         ),
@@ -141,11 +159,13 @@ class _HomePageState extends State<HomePage> {
       children: [
         CarouselSlider(
           options: CarouselOptions(
-            height: 250,
+            height: 280,
             autoPlay: true,
-            autoPlayInterval: const Duration(seconds: 5),
+            autoPlayInterval: const Duration(seconds: 4),
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
             enlargeCenterPage: true,
-            viewportFraction: 0.9,
+            enlargeFactor: 0.2,
+            viewportFraction: 0.85,
             onPageChanged: (index, reason) {
               setState(() {
                 _currentSlideIndex = index;
@@ -268,38 +288,97 @@ class _HomePageState extends State<HomePage> {
   Widget _buildQuickNavigationCards() {
     return Column(
       children: [
-        // First row - Original cards
+        // Información Institucional
+        _buildSectionTitle('Información Institucional'),
+        const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
               child: _buildNavigationCard(
                 title: 'Sobre Nosotros',
-                description: 'Conoce nuestra historia',
+                description: 'Misión, visión y valores',
                 icon: Icons.info_outline,
+                color: const Color(0xFF2E7D32),
                 onTap: () => context.go(AppRoutes.aboutUs),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _buildNavigationCard(
+                title: 'Equipo Ministerial',
+                description: 'Conoce nuestro equipo',
+                icon: Icons.people_outline,
+                color: const Color(0xFF2E7D32),
+                onTap: () => context.go(AppRoutes.equipoMinisterio),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+
+        // Servicios y Recursos
+        _buildSectionTitle('Servicios y Recursos'),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildNavigationCard(
                 title: 'Servicios',
-                description: 'Explora nuestros servicios',
+                description: 'Trámites y servicios',
                 icon: Icons.business_center_outlined,
+                color: const Color(0xFF2E7D32),
                 onTap: () => context.go(AppRoutes.services),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildNavigationCard(
+                title: 'Áreas Protegidas',
+                description: 'Parques y reservas',
+                icon: Icons.nature_outlined,
+                color: const Color(0xFF2E7D32),
+                onTap: () => context.go(AppRoutes.areasProtegidas),
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildNavigationCard(
+                title: 'Medidas Ambientales',
+                description: 'Guías de conservación',
+                icon: Icons.eco_outlined,
+                color: const Color(0xFF2E7D32),
+                onTap: () => context.go(AppRoutes.medidasAmbientales),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildNavigationCard(
+                title: 'Voluntariado',
+                description: 'Únete a la causa',
+                icon: Icons.volunteer_activism_outlined,
+                color: const Color(0xFF2E7D32),
+                onTap: () => context.go(AppRoutes.voluntariado),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
 
-        // Second row - Original cards
+        // Comunicación y Educación
+        _buildSectionTitle('Comunicación y Educación'),
+        const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
               child: _buildNavigationCard(
                 title: 'Noticias',
-                description: 'Noticias ambientales',
+                description: 'Actualidad ambiental',
                 icon: Icons.article_outlined,
+                color: const Color(0xFF2E7D32),
                 onTap: () => context.go(AppRoutes.noticias),
               ),
             ),
@@ -307,60 +386,37 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: _buildNavigationCard(
                 title: 'Videos',
-                description: 'Videos educativos',
+                description: 'Contenido educativo',
                 icon: Icons.play_circle_outline,
+                color: const Color(0xFF2E7D32),
                 onTap: () => context.go(AppRoutes.videos),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+      ],
+    );
+  }
 
-        // Third row - New areas protegidas and medidas
-        Row(
-          children: [
-            Expanded(
-              child: _buildNavigationCard(
-                title: 'Áreas Protegidas',
-                description: 'Parques y reservas',
-                icon: Icons.nature_outlined,
-                onTap: () => context.go(AppRoutes.areasProtegidas),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildNavigationCard(
-                title: 'Medidas Ambientales',
-                description: 'Guías para cuidar el ambiente',
-                icon: Icons.eco_outlined,
-                onTap: () => context.go(AppRoutes.medidasAmbientales),
-              ),
-            ),
-          ],
+  Widget _buildSectionTitle(String title) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 20,
+          decoration: BoxDecoration(
+            color: const Color(0xFF2E7D32),
+            borderRadius: BorderRadius.circular(2),
+          ),
         ),
-        const SizedBox(height: 12),
-
-        // Fourth row - New team and volunteer cards
-        Row(
-          children: [
-            Expanded(
-              child: _buildNavigationCard(
-                title: 'Equipo Ministerial',
-                description: 'Conoce nuestro equipo',
-                icon: Icons.people_outline,
-                onTap: () => context.go(AppRoutes.equipoMinisterio),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildNavigationCard(
-                title: 'Voluntariado',
-                description: 'Únete a nosotros',
-                icon: Icons.volunteer_activism_outlined,
-                onTap: () => context.go(AppRoutes.voluntariado),
-              ),
-            ),
-          ],
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF2E7D32),
+          ),
         ),
       ],
     );
@@ -371,6 +427,7 @@ class _HomePageState extends State<HomePage> {
     required String description,
     required IconData icon,
     required VoidCallback onTap,
+    Color color = const Color(0xFF2E7D32),
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -381,40 +438,41 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(
-            color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
-            width: 1,
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: const Color(0xFF2E7D32), size: 24),
+              child: Icon(icon, color: color, size: 26),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF2E7D32),
+                color: color,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
               description,
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                height: 1.3,
+              ),
             ),
           ],
         ),
@@ -422,33 +480,176 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildQuickStats() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [const Color(0xFF2E7D32), const Color(0xFF388E3C)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const Text(
+            'Nuestro Impacto',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatCard('150+', 'Áreas Protegidas', Icons.forest),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildStatCard(
+                  '50K+',
+                  'Hectáreas Conservadas',
+                  Icons.landscape,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatCard(
+                  '1000+',
+                  'Especies Protegidas',
+                  Icons.pets,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildStatCard(
+                  '25+',
+                  'Programas Activos',
+                  Icons.trending_up,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String number, String label, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: Colors.white, size: 28),
+          const SizedBox(height: 8),
+          Text(
+            number,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildInfoSection() {
     return Container(
       width: double.infinity,
-      color: const Color(0xFF2E7D32).withValues(alpha: 0.05),
-      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xFF2E7D32).withValues(alpha: 0.05),
+            const Color(0xFF2E7D32).withValues(alpha: 0.1),
+          ],
+        ),
+      ),
+      padding: const EdgeInsets.all(32),
       child: Column(
         children: [
-          const Icon(Icons.eco, size: 48, color: Color(0xFF2E7D32)),
-          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2E7D32),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.eco, size: 48, color: Colors.white),
+          ),
+          const SizedBox(height: 24),
           const Text(
             'Ministerio de Medio Ambiente y Recursos Naturales',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF2E7D32),
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
-            'Comprometidos con la protección del medio ambiente y el desarrollo sostenible de República Dominicana.',
+            'Comprometidos con la protección del medio ambiente y el desarrollo sostenible de República Dominicana. Trabajamos cada día para preservar nuestros recursos naturales para las futuras generaciones.',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 15,
               color: Colors.grey[700],
-              height: 1.4,
+              height: 1.5,
             ),
             textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2E7D32),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: const Text(
+              '¡Únete a la misión!',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
+            ),
           ),
         ],
       ),

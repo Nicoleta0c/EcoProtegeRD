@@ -42,7 +42,8 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
 
   Future<void> _openInMaps() async {
     if (area?.latitud != null && area?.longitud != null) {
-      final url = 'https://www.google.com/maps?q=${area!.latitud},${area!.longitud}';
+      final url =
+          'https://www.openstreetmap.org/?mlat=${area!.latitud}&mlon=${area!.longitud}&zoom=15';
       if (await canLaunchUrl(Uri.parse(url))) {
         await launchUrl(Uri.parse(url));
       }
@@ -118,44 +119,28 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
               ),
               const SizedBox(height: 16),
             ],
-            
+
             Text(
               area!.nombre,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
-            _buildInfoCard(
-              'Descripción',
-              area!.descripcion,
-              Icons.description,
-            ),
+            _buildInfoCard('Descripción', area!.descripcion, Icons.description),
             const SizedBox(height: 16),
 
-            _buildInfoCard(
-              'Ubicación',
-              area!.ubicacion,
-              Icons.location_on,
-            ),
+            _buildInfoCard('Ubicación', area!.ubicacion, Icons.location_on),
             const SizedBox(height: 16),
 
             if (area!.categoria != null) ...[
-              _buildInfoCard(
-                'Categoría',
-                area!.categoria!,
-                Icons.category,
-              ),
+              _buildInfoCard('Categoría', area!.categoria!, Icons.category),
               const SizedBox(height: 16),
             ],
 
             if (area!.tamano != null) ...[
-              _buildInfoCard(
-                'Tamaño',
-                area!.tamano!,
-                Icons.straighten,
-              ),
+              _buildInfoCard('Tamaño', area!.tamano!, Icons.straighten),
               const SizedBox(height: 16),
             ],
 
@@ -175,9 +160,8 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
                           const SizedBox(width: 8),
                           Text(
                             'Coordenadas',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -188,7 +172,7 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
                       ElevatedButton.icon(
                         onPressed: _openInMaps,
                         icon: const Icon(Icons.map),
-                        label: const Text('Ver en Google Maps'),
+                        label: const Text('Ver en OpenStreetMap'),
                       ),
                     ],
                   ),
@@ -210,10 +194,7 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
           children: [
             Row(
               children: [
-                Icon(
-                  icon,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   title,

@@ -31,9 +31,8 @@ class AcercaDePage extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       'EcoProtegeRD',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     const Text(
@@ -48,7 +47,9 @@ class AcercaDePage extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.secondary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
@@ -67,9 +68,9 @@ class AcercaDePage extends StatelessWidget {
 
             Text(
               'Equipo de Desarrollo',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
@@ -85,10 +86,10 @@ class AcercaDePage extends StatelessWidget {
             const SizedBox(height: 16),
 
             _buildTeamMember(
-              nombre: 'María Elena',
-              apellido: 'Rodríguez Santos',
-              matricula: '2022-0124',
-              telefono: '809-555-0002',
+              nombre: 'Smith',
+              apellido: 'Rodríguez Peguero',
+              matricula: '2023-1123',
+              telefono: '829-987-4447',
               telegram: '@mariaelena',
               foto: null,
             ),
@@ -120,14 +121,16 @@ class AcercaDePage extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'Información del Proyecto',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    _buildInfoRow('Universidad:', 'Instituto Tecnológico de las Américas (ITLA)'),
+                    _buildInfoRow(
+                      'Universidad:',
+                      'Instituto Tecnológico de las Américas (ITLA)',
+                    ),
                     _buildInfoRow('Carrera:', 'Desarrollo de Software'),
                     _buildInfoRow('Asignatura:', 'Programación Móvil'),
                     _buildInfoRow('Profesor:', 'Ing. José Manuel García'),
@@ -155,9 +158,8 @@ class AcercaDePage extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'Características de la App',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -191,16 +193,17 @@ class AcercaDePage extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'API Utilizada',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     const Text('Base URL: https://adamix.net/medioambiente/'),
                     const SizedBox(height: 4),
-                    const Text('Documentación: https://adamix.net/medioambiente/docx/'),
+                    const Text(
+                      'Documentación: https://adamix.net/medioambiente/docx/',
+                    ),
                   ],
                 ),
               ),
@@ -231,13 +234,14 @@ class AcercaDePage extends StatelessWidget {
                   radius: 30,
                   backgroundColor: Colors.grey[300],
                   backgroundImage: foto != null ? NetworkImage(foto) : null,
-                  child: foto == null
-                      ? const Icon(
-                          Icons.person,
-                          size: 30,
-                          color: Colors.grey,
-                        )
-                      : null,
+                  child:
+                      foto == null
+                          ? const Icon(
+                            Icons.person,
+                            size: 30,
+                            color: Colors.grey,
+                          )
+                          : null,
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -317,9 +321,7 @@ class AcercaDePage extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Text(value),
-          ),
+          Expanded(child: Text(value)),
         ],
       ),
     );
@@ -330,25 +332,16 @@ class AcercaDePage extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          const Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 16,
-          ),
+          const Icon(Icons.check_circle, color: Colors.green, size: 16),
           const SizedBox(width: 8),
-          Expanded(
-            child: Text(feature),
-          ),
+          Expanded(child: Text(feature)),
         ],
       ),
     );
   }
 
   Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: phoneNumber,
-    );
+    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
     if (await canLaunchUrl(launchUri)) {
       await launchUrl(launchUri);
     }
