@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../models/area_protegida.dart';
 import '../../services/api_service.dart';
 import '../../routes/routes.dart';
+import '../../widgets/custom_drawer.dart';
 
 class AreasProtegidasPage extends StatefulWidget {
   const AreasProtegidasPage({super.key});
@@ -44,11 +45,16 @@ class _AreasProtegidasPageState extends State<AreasProtegidasPage> {
       if (query.isEmpty) {
         filteredAreas = areas;
       } else {
-        filteredAreas = areas
-            .where((area) =>
-                area.nombre.toLowerCase().contains(query.toLowerCase()) ||
-                area.ubicacion.toLowerCase().contains(query.toLowerCase()))
-            .toList();
+        filteredAreas =
+            areas
+                .where(
+                  (area) =>
+                      area.nombre.toLowerCase().contains(query.toLowerCase()) ||
+                      area.ubicacion.toLowerCase().contains(
+                        query.toLowerCase(),
+                      ),
+                )
+                .toList();
       }
     });
   }
@@ -56,9 +62,15 @@ class _AreasProtegidasPageState extends State<AreasProtegidasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: const Text('Áreas Protegidas'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text(
+          'Áreas Protegidas',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.map),
@@ -81,96 +93,97 @@ class _AreasProtegidasPageState extends State<AreasProtegidasPage> {
             ),
           ),
           Expanded(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : filteredAreas.isEmpty
+            child:
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : filteredAreas.isEmpty
                     ? const Center(
-                        child: Text('No se encontraron áreas protegidas'),
-                      )
+                      child: Text('No se encontraron áreas protegidas'),
+                    )
                     : ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: filteredAreas.length,
-                        itemBuilder: (context, index) {
-                          final area = filteredAreas[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 16),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.all(16),
-                              leading: CircleAvatar(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                child: const Icon(
-                                  Icons.nature,
-                                  color: Colors.white,
-                                ),
+                      padding: const EdgeInsets.all(16),
+                      itemCount: filteredAreas.length,
+                      itemBuilder: (context, index) {
+                        final area = filteredAreas[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            leading: CircleAvatar(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              child: const Icon(
+                                Icons.nature,
+                                color: Colors.white,
                               ),
-                              title: Text(
-                                area.nombre,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            ),
+                            title: Text(
+                              area.nombre,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 8),
-                                  Text(area.descripcion),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.location_on,
-                                        size: 16,
-                                        color: Colors.grey,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Expanded(
-                                        child: Text(
-                                          area.ubicacion,
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  if (area.categoria != null) ...[
-                                    const SizedBox(height: 4),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary
-                                            .withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 8),
+                                Text(area.descripcion),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
                                       child: Text(
-                                        area.categoria!,
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 12,
+                                        area.ubicacion,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
                                         ),
                                       ),
                                     ),
                                   ],
+                                ),
+                                if (area.categoria != null) ...[
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      area.categoria!,
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
                                 ],
-                              ),
-                              trailing: const Icon(Icons.arrow_forward_ios),
-                              onTap: () {
-                                context.push(
-                                  '${AppRoutes.areaDetalle}?id=${area.id}',
-                                );
-                              },
+                              ],
                             ),
-                          );
-                        },
-                      ),
+                            trailing: const Icon(Icons.arrow_forward_ios),
+                            onTap: () {
+                              context.push(
+                                '${AppRoutes.areaDetalle}?id=${area.id}',
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),
