@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../routes/routes.dart';
+import '../utils/session.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -23,23 +24,114 @@ class CustomDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.eco, size: 48, color: Colors.white),
-                const SizedBox(height: 8),
-                const Text(
-                  'EcoProtegeRD',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  children: [
+                    const Icon(Icons.eco, size: 40, color: Colors.white),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'EcoProtegeRD',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Ministerio de Medio Ambiente',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.7),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  'Ministerio de Medio Ambiente',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
-                    fontSize: 14,
+                const SizedBox(height: 12),
+                // Mostrar información del usuario si está logueado
+                if (Session.isLoggedIn()) ...[
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.white.withValues(alpha: 0.2),
+                          child: Text(
+                            Session.getUserName().isNotEmpty
+                                ? Session.getUserName()[0].toUpperCase()
+                                : 'U',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                Session.getUserName(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                Session.getUserEmail(),
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.8),
+                                  fontSize: 12,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                ] else ...[
+                  // Mostrar mensaje para usuarios no logueados
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.person_outline,
+                          color: Colors.white70,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Invitado - Inicia sesión',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -139,6 +231,31 @@ class CustomDrawer extends StatelessWidget {
             route: AppRoutes.acercaDe,
           ),
           const Divider(),
+          // Opciones de autenticación
+          if (!Session.isLoggedIn()) ...[
+            _buildDrawerItem(
+              context,
+              icon: Icons.login,
+              title: 'Iniciar Sesión',
+              route: AppRoutes.Login,
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.person_add,
+              title: 'Registrarse',
+              route: AppRoutes.Register,
+            ),
+          ] else ...[
+            ListTile(
+              leading: const Icon(Icons.logout, color: Color(0xFF2E7D32)),
+              title: const Text('Cerrar Sesión'),
+              subtitle: Text('Salir como ${Session.getUserName()}'),
+              onTap: () {
+                _showLogoutDialog(context);
+              },
+            ),
+          ],
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.phone, color: Color(0xFF2E7D32)),
             title: const Text('Contacto'),
@@ -158,6 +275,41 @@ class CustomDrawer extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Cerrar Sesión'),
+          content: Text(
+            '¿Estás seguro de que quieres cerrar sesión, ${Session.getUserName()}?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Cerrar diálogo
+              },
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Cerrar diálogo
+                Navigator.pop(context); // Cerrar drawer
+                Session.logout(); // Cerrar sesión
+                context.go(AppRoutes.home); // Ir al home
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2E7D32),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Cerrar Sesión'),
+            ),
+          ],
+        );
+      },
     );
   }
 

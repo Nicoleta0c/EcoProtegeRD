@@ -42,7 +42,13 @@ class _MyReportsScreenState extends State<MyReportsScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async {
+            if (mounted && Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else if (mounted) {
+              Navigator.pushReplacementNamed(context, '/');
+            }
+          },
         ),
         actions: [
           IconButton(
@@ -405,7 +411,11 @@ class _MyReportsScreenState extends State<MyReportsScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  if (mounted && Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
                 child: const Text('Cerrar'),
               ),
             ],

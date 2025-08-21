@@ -52,8 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
       if (result['success'] &&
           result['data'] != null &&
           result['data']['token'] != null) {
-        // Guardar token en Session
-        Session.login(result['data']['token']);
+        // Guardar token y información del usuario en Session
+        Session.login(
+          result['data']['token'],
+          userInfo: result['data']['user'] ?? result['data'],
+        );
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

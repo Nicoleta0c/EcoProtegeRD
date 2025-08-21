@@ -24,119 +24,79 @@ class _ReportsMapScreenState extends State<ReportsMapScreen> {
   }
 
   Future<void> _loadReports() async {
-    if (!mounted) return;
-
     setState(() => _isLoading = true);
     try {
       final reports = await ApiService.getLocalReports();
       print('DEBUG: Reportes cargados: ${reports.length}');
-
-      if (!mounted) return;
-
       setState(() {
         _reports = reports;
+        _createMarkers();
         _isLoading = false;
       });
-
-      // Crear marcadores después de actualizar el estado
-      await Future.delayed(const Duration(milliseconds: 100));
-      if (mounted) {
-        _createMarkers();
-      }
     } catch (e) {
       print('ERROR cargando reportes: $e');
-      if (!mounted) return;
-
       setState(() => _isLoading = false);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al cargar reportes: $e'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error al cargar reportes: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
   void _createMarkers() {
-    if (!mounted || _reports.isEmpty) return;
+    _markers.clear();
 
-    try {
-      _markers.clear();
+    for (int i = 0; i < _reports.length; i++) {
+      final report = _reports[i];
+      print('DEBUG: Procesando reporte $i: ${report['titulo']}');
 
-      for (int i = 0; i < _reports.length; i++) {
-        final report = _reports[i];
-        print('DEBUG: Procesando reporte $i: ${report['titulo']}');
+      // Verificar que las coordenadas existen y son válidas
+      final lat = report['latitud'];
+      final lng = report['longitud'];
 
-        // Verificar que las coordenadas existen y son válidas
-        final lat = report['latitud'];
-        final lng = report['longitud'];
+      if (lat != null && lng != null) {
+        double? latitude;
+        double? longitude;
 
-        if (lat != null && lng != null) {
-          double? latitude;
-          double? longitude;
+        // Convertir a double si es necesario
+        if (lat is String) {
+          latitude = double.tryParse(lat);
+        } else if (lat is num) {
+          latitude = lat.toDouble();
+        }
 
-          // Convertir a double si es necesario
-          try {
-            if (lat is String) {
-              latitude = double.tryParse(lat);
-            } else if (lat is num) {
-              latitude = lat.toDouble();
-            }
+        if (lng is String) {
+          longitude = double.tryParse(lng);
+        } else if (lng is num) {
+          longitude = lng.toDouble();
+        }
 
-            if (lng is String) {
-              longitude = double.tryParse(lng);
-            } else if (lng is num) {
-              longitude = lng.toDouble();
-            }
-
-            // Validar que las coordenadas estén en rangos válidos
-            if (latitude != null &&
-                longitude != null &&
-                latitude >= -90 &&
-                latitude <= 90 &&
-                longitude >= -180 &&
-                longitude <= 180) {
-              print('DEBUG: Agregando marcador en $latitude, $longitude');
-              _markers.add(
-                Marker(
-                  point: LatLng(latitude, longitude),
-                  child: GestureDetector(
-                    onTap: () => _showReportDetails(report),
-                    child: const Icon(
-                      Icons.location_on,
-                      color: Colors.red,
-                      size: 40,
-                    ),
-                  ),
+        if (latitude != null && longitude != null) {
+          print('DEBUG: Agregando marcador en $latitude, $longitude');
+          _markers.add(
+            Marker(
+              point: LatLng(latitude, longitude),
+              child: GestureDetector(
+                onTap: () => _showReportDetails(report),
+                child: const Icon(
+                  Icons.location_on,
+                  color: Colors.red,
+                  size: 40,
                 ),
-              );
-            } else {
-              print(
-                'DEBUG: Coordenadas inválidas para reporte $i: $latitude, $longitude',
-              );
-            }
-          } catch (coordError) {
-            print('ERROR procesando coordenadas del reporte $i: $coordError');
-          }
+              ),
+            ),
+          );
         }
       }
-
-      print('DEBUG: Total marcadores creados: ${_markers.length}');
-
-      // Actualizar el estado con los nuevos marcadores
-      if (mounted) {
-        setState(() {});
-      }
-    } catch (e) {
-      print('ERROR creando marcadores: $e');
     }
+    print('DEBUG: Total marcadores creados: ${_markers.length}');
   }
 
   void _showReportDetails(Map<String, dynamic> report) {
-    if (!mounted) return;
-
     showDialog(
       context: context,
       builder:
@@ -147,10 +107,16 @@ class _ReportsMapScreenState extends State<ReportsMapScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Mostrar imagen con manejo de errores
-                  if (report['foto'] != null &&
-                      report['foto'].toString().isNotEmpty)
-                    _buildReportImage(report['foto']),
+                  if (report['foto'] != null && report['foto'].isNotEmpty)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.memory(
+                        base64Decode(report['foto']),
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   const SizedBox(height: 16),
                   _buildDetailRow(
                     'Descripción:',
@@ -176,70 +142,12 @@ class _ReportsMapScreenState extends State<ReportsMapScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () {
-                  if (mounted && Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
+                onPressed: () => Navigator.pop(context),
                 child: const Text('Cerrar'),
               ),
             ],
           ),
     );
-  }
-
-  Widget _buildReportImage(String base64Image) {
-    try {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.memory(
-          base64Decode(base64Image),
-          width: double.infinity,
-          height: 200,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            print('ERROR cargando imagen: $error');
-            return Container(
-              width: double.infinity,
-              height: 200,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                  SizedBox(height: 8),
-                  Text(
-                    'Error al cargar imagen',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      );
-    } catch (e) {
-      print('ERROR decodificando imagen base64: $e');
-      return Container(
-        width: double.infinity,
-        height: 200,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.broken_image, size: 50, color: Colors.grey),
-            SizedBox(height: 8),
-            Text('Imagen no disponible', style: TextStyle(color: Colors.grey)),
-          ],
-        ),
-      );
-    }
   }
 
   Widget _buildDetailRow(String label, String value) {
