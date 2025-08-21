@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../services/auth_service.dart';
 import '../../utils/app_colors.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_fiel.dart';
-import 'login_screen.dart';
+import '../../routes/routes.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -84,25 +85,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
         matricula: _matriculaController.text.trim(),
       );
 
-      print(result); // debug: muestra todo lo que devuelve el backend
+      print(result); 
 
       if (result['success'] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Registro exitoso'),
-            backgroundColor: AppColors.success,
-          ),
-        );
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
+        context.go(AppRoutes.Login);
       } else {
         String errorMessage = 'Error en el registro';
-        // Aqui capturamos correctamente el error que viene en data['error']
         if (result.containsKey('data') && result['data'] != null && result['data']['error'] != null) {
           errorMessage = result['data']['error'];
+        } else if (result['statusCode'] == 409) {
+          errorMessage = 'El usuario o cédula ya está registrado';
         }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -259,10 +251,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Center(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const LoginScreen()),
-                        );
+                        context.go(AppRoutes.Login);
                       },
                       child: RichText(
                         text: const TextSpan(

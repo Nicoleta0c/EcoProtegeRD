@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class AuthService {
   static const String baseUrl = 'https://adamix.net/medioambiente';
+  static final Dio _dio = Dio();
 
   // Registro de usuario
   static Future<Map<String, dynamic>> register({
@@ -15,28 +16,44 @@ class AuthService {
     required String matricula,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/auth/register'),
-        headers: {
+      final body = {
+        'cedula': cedula,
+        'nombre': nombre,
+        'apellido': apellido,
+        'correo': correo,
+        'password': password,
+        'telefono': telefono,
+        'matricula': matricula,
+      };
+      print('Request body: ${jsonEncode(body)}');
+      print('Headers: ${{'Content-Type': 'application/json'}}');
+      final response = await _dio.post(
+        '$baseUrl/auth/register',
+        data: body,
+        options: Options(headers: {
           'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'cedula': cedula,
-          'nombre': nombre,
-          'apellido': apellido,
-          'correo': correo,
-          'password': password,
-          'telefono': telefono,
-          'matricula': matricula,
+        }, validateStatus: (status) {
+          return status! < 500;
         }),
       );
-
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.data}');
+      print('Full response: $response');
       return {
         'success': response.statusCode == 200 || response.statusCode == 201,
-        'data': jsonDecode(response.body),
+        'data': response.data,
         'statusCode': response.statusCode,
       };
     } catch (e) {
+      if (e is DioException) {
+        print('Error: ${e.response?.statusCode} - ${e.response?.data}');
+        return {
+          'success': false,
+          'error': e.response?.data['error'] ?? 'Error de conexión',
+          'statusCode': e.response?.statusCode ?? 0,
+        };
+      }
+      print('Error: $e');
       return {
         'success': false,
         'error': 'Error de conexión: $e',
@@ -51,23 +68,39 @@ class AuthService {
     required String password,
   }) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/auth/login'),
-        headers: {
+      final body = {
+        'correo': correo,
+        'password': password,
+      };
+      print('Request body: ${jsonEncode(body)}');
+      print('Headers: ${{'Content-Type': 'application/json'}}');
+      final response = await _dio.post(
+        '$baseUrl/auth/login',
+        data: body,
+        options: Options(headers: {
           'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'correo': correo,
-          'password': password,
+        }, validateStatus: (status) {
+          return status! < 500; 
         }),
       );
-
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.data}');
+      print('Full response: $response');
       return {
         'success': response.statusCode == 200,
-        'data': jsonDecode(response.body),
+        'data': response.data,
         'statusCode': response.statusCode,
       };
     } catch (e) {
+      if (e is DioException) {
+        print('Error: ${e.response?.statusCode} - ${e.response?.data}');
+        return {
+          'success': false,
+          'error': e.response?.data['error'] ?? 'Error de conexión',
+          'statusCode': e.response?.statusCode ?? 0,
+        };
+      }
+      print('Error: $e');
       return {
         'success': false,
         'error': 'Error de conexión: $e',
