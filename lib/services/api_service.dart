@@ -12,6 +12,11 @@ import 'local_database_service.dart';
 
 class ApiService {
   static const String baseUrl = 'https://adamix.net/medioambiente';
+  // Proxy CORS para desarrollo web
+  static const String corsProxy = 'https://cors-anywhere.herokuapp.com/';
+
+  // URL con proxy para web
+  static String get apiUrl => kIsWeb ? '$corsProxy$baseUrl' : baseUrl;
 
   // Obtener lista de servicios
   static Future<List<Service>> getServices() async {
@@ -22,7 +27,7 @@ class ApiService {
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/servicios'),
+        Uri.parse('$apiUrl/servicios'),
         headers: {'Accept': 'application/json'},
       );
 
@@ -413,6 +418,7 @@ class ApiService {
         id: '001',
         nombre: 'Parque Nacional Los Haitises',
         descripcion:
+           
             'Parque nacional ubicado en la región noreste de República Dominicana.',
         ubicacion: 'Provincia de Hato Mayor',
         latitud: 19.0528,
@@ -451,7 +457,9 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> medidasData = json.decode(response.body);
         return medidasData
+            
             .map((json) => MedidaAmbiental.fromJson(json))
+            
             .toList();
       } else {
         return _getDefaultMedidasAmbientales();
@@ -467,8 +475,10 @@ class ApiService {
         id: '001',
         titulo: 'Reducir el Consumo de Plástico',
         descripcion:
+           
             'Medidas para disminuir el uso de plásticos de un solo uso.',
         contenido:
+           
             'El plástico es uno de los principales contaminantes del medio ambiente...',
         categoria: 'Contaminación',
         fechaCreacion: '2025-01-01',
@@ -500,7 +510,9 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> equipoData = json.decode(response.body);
         return equipoData
+            
             .map((json) => EquipoMinisterio.fromJson(json))
+            
             .toList();
       } else {
         return _getDefaultEquipoMinisterio();
@@ -578,30 +590,167 @@ class ApiService {
     Voluntario voluntario,
   ) async {
     try {
+      // Convertir todos los datos a form-encoded (todos como string)
+      final formData = {
+        'cedula': voluntario.cedula.toString(),
+        'nombre': voluntario.nombre.toString(),
+        'apellido': voluntario.apellido.toString(),
+        'correo': voluntario.email.toString(),
+        'password': voluntario.password.toString(),
+        'telefono': voluntario.telefono.toString(),
+      };
+
+      if (kDebugMode) {
+        print('Enviando datos del voluntario (form-encoded): $formData');
+      }
+
       final response = await http.post(
-        Uri.parse('$baseUrl/voluntarios'),
+        Uri.parse('$apiUrl/voluntarios'),
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
         },
-        body: json.encode(voluntario.toJson()),
+        body: formData,
       );
 
+      if (kDebugMode) {
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return {
-          'success': true,
-          'message': 'Registro exitoso. Te contactaremos pronto.',
-        };
+        // Parsear respuesta exitosa
+        try {
+          final responseData = json.decode(response.body);
+          return {
+            'success': true,
+            'message':
+                responseData['mensaje'] ??
+                'Registro exitoso. Te contactaremos pronto.',
+            'data': responseData,
+          };
+        } catch (e) {
+          return {
+            'success': true,
+            'message': 'Registro exitoso. Te contactaremos pronto.',
+          };
+        }
       } else {
-        return {
-          'success': false,
-          'message': 'Error en el registro. Intenta nuevamente.',
-        };
+        // Parsear mensaje de error de la API
+        try {
+          final errorData = json.decode(response.body);
+          return {
+            'success': false,
+            'message':
+                errorData['error'] ??
+                'Error en el registro. Código: ${response.statusCode}',
+            'statusCode': response.statusCode,
+          };
+        } catch (e) {
+          return {
+            'success': false,
+            'message': 'Error en el registro. Código: ${response.statusCode}',
+            'statusCode': response.statusCode,
+          };
+        }
       }
     } catch (e) {
+      if (kDebugMode) {
+        print('Error al registrar voluntario: $e');
+      }
       return {
         'success': false,
         'message': 'Error de conexión. Intenta nuevamente.',
+      };
+    }
+  }
+
+  // Método para probar la conectividad de la API
+  static Future<Map<String, dynamic>> testApiConnection() async {
+    if (kIsWeb) {
+      // En web, explicar la limitación de CORS
+      return {
+        'success': true,
+        'message':
+            'En modo web se simula la API por limitaciones de CORS. En móvil funcionará con la API real.',
+        'note':
+            'CORS (Cross-Origin Resource Sharing) bloquea peticiones desde navegadores a dominios externos.',
+        'realApiTest': await _testRealApiFromBrowser(),
+      };
+    }
+
+    try {
+      // Usar datos de prueba (todos como string para form-encoded)
+      final testFormData = {
+        'cedula': DateTime.now().millisecondsSinceEpoch.toString().substring(3),
+        'nombre': 'Test',
+        'apellido': 'Usuario',
+        'correo': 'test${DateTime.now().millisecondsSinceEpoch}@example.com',
+        'password': 'test123',
+        'telefono': '8091234567',
+      };
+
+      if (kDebugMode) {
+        print('=== PROBANDO CONECTIVIDAD API (MÓVIL) ===');
+        print('URL: $baseUrl/voluntarios');
+        print('Datos de prueba (form-encoded): $testFormData');
+      }
+
+      final response = await http.post(
+        Uri.parse('$baseUrl/voluntarios'),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        },
+        body: testFormData,
+      );
+
+      if (kDebugMode) {
+        print('Status: ${response.statusCode}');
+        print('Response: ${response.body}');
+        print('===============================');
+      }
+
+      return {
+        'success': response.statusCode >= 200 && response.statusCode < 300,
+        'statusCode': response.statusCode,
+        'response': response.body,
+        'message':
+            response.statusCode >= 200 && response.statusCode < 300
+                ? 'API funcionando correctamente'
+                : 'API respondió con error: ${response.statusCode}',
+      };
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error conectando con API: $e');
+      }
+      return {
+        'success': false,
+        'error': e.toString(),
+        'message': 'No se pudo conectar con la API',
+      };
+    }
+  }
+
+  // Método auxiliar para probar API desde navegador
+  static Future<Map<String, dynamic>> _testRealApiFromBrowser() async {
+    try {
+      // Intentar una petición simple primero
+      final response = await http.get(
+        Uri.parse('$baseUrl/servicios'),
+        headers: {'Accept': 'application/json'},
+      );
+
+      return {
+        'canConnect': true,
+        'message': 'Puede conectar con la API (GET servicios)',
+        'statusCode': response.statusCode,
+      };
+    } catch (e) {
+      return {
+        'canConnect': false,
+        'message': 'Error de CORS al intentar conectar',
+        'error': e.toString(),
       };
     }
   }

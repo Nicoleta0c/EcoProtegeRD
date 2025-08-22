@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/voluntario.dart';
 import '../../services/api_service.dart';
 import '../../widgets/custom_text_fiel.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/custom_drawer.dart';
 
 class RegistroVoluntarioPage extends StatefulWidget {
   const RegistroVoluntarioPage({super.key});
@@ -21,7 +23,7 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _telefonoController = TextEditingController();
-  
+
   bool _isLoading = false;
 
   @override
@@ -112,7 +114,27 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
         telefono: _telefonoController.text.trim(),
       );
 
+      // Debug: Mostrar datos que se van a enviar
+      if (kDebugMode) {
+        print('=== DATOS DEL FORMULARIO ===');
+        print('Cédula: ${voluntario.cedula}');
+        print('Nombre: ${voluntario.nombre}');
+        print('Apellido: ${voluntario.apellido}');
+        print('Email: ${voluntario.email}');
+        print('Teléfono: ${voluntario.telefono}');
+        print('JSON a enviar: ${voluntario.toJson()}');
+        print('=========================');
+      }
+
       final result = await ApiService.registrarVoluntario(voluntario);
+
+      // Debug: Mostrar resultado
+      if (kDebugMode) {
+        print('=== RESULTADO DEL REGISTRO ===');
+        print('Success: ${result['success']}');
+        print('Message: ${result['message']}');
+        print('=============================');
+      }
 
       if (mounted) {
         if (result['success']) {
@@ -122,6 +144,11 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
         }
       }
     } catch (e) {
+      if (kDebugMode) {
+        print('=== ERROR EN SUBMIT FORM ===');
+        print('Error: $e');
+        print('============================');
+      }
       if (mounted) {
         _showErrorDialog('Error inesperado. Intente nuevamente.');
       }
@@ -139,11 +166,7 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          icon: const Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 48,
-          ),
+          icon: const Icon(Icons.check_circle, color: Colors.green, size: 48),
           title: const Text('¡Registro exitoso!'),
           content: Text(message),
           actions: [
@@ -165,11 +188,7 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          icon: const Icon(
-            Icons.error,
-            color: Colors.red,
-            size: 48,
-          ),
+          icon: const Icon(Icons.error, color: Colors.red, size: 48),
           title: const Text('Error en el registro'),
           content: Text(message),
           actions: [
@@ -186,9 +205,15 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: const Text('Registro de Voluntario'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text(
+          'Registro de Voluntario',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -216,9 +241,8 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
                           children: [
                             Text(
                               'Únete a nuestro equipo',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 4),
                             const Text(
@@ -251,7 +275,8 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
                       controller: _nombreController,
                       label: 'Nombre',
                       hint: 'Ingrese su nombre',
-                      validator: (value) => _validateRequired(value, 'El nombre'),
+                      validator:
+                          (value) => _validateRequired(value, 'El nombre'),
                       icon: Icons.person,
                     ),
                   ),
@@ -261,7 +286,8 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
                       controller: _apellidoController,
                       label: 'Apellido',
                       hint: 'Ingrese su apellido',
-                      validator: (value) => _validateRequired(value, 'El apellido'),
+                      validator:
+                          (value) => _validateRequired(value, 'El apellido'),
                       icon: Icons.person_outline,
                     ),
                   ),
@@ -313,8 +339,31 @@ class _RegistroVoluntarioPageState extends State<RegistroVoluntarioPage> {
               SizedBox(
                 width: double.infinity,
                 child: CustomButton(
-                  text: _isLoading ? 'Registrando...' : 'Registrarse como voluntario',
+                  text:
+                      _isLoading
+                          ? 'Registrando...'
+                          : 'Registrarse como voluntario',
                   onPressed: _isLoading ? () {} : _submitForm,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Back button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    context.pop();
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('Regresar a Voluntariado'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ),
               ),
 

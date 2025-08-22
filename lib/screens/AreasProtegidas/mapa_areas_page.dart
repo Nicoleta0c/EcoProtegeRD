@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/area_protegida.dart';
 import '../../services/api_service.dart';
+import '../../widgets/custom_drawer.dart';
 
 class MapaAreasPage extends StatefulWidget {
   const MapaAreasPage({super.key});
@@ -113,11 +114,9 @@ class _MapaAreasPageState extends State<MapaAreasPage> {
   }
 
   Future<void> _openAllAreasInMaps() async {
-    final validAreas =
-        areas
-            .where((area) => area.latitud != null && area.longitud != null)
-            .toList();
-
+    // Create a Google Maps URL with multiple markers
+    final validAreas = areas.where((area) => area.latitud != null && area.longitud != null).toList();
+    
     if (validAreas.isNotEmpty) {
       // Usar OpenStreetMap para mostrar múltiples puntos
       final centerLat =
@@ -156,9 +155,15 @@ class _MapaAreasPageState extends State<MapaAreasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: const Text('Mapa de Áreas Protegidas'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text(
+          'Mapa de Áreas Protegidas',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.open_in_new),
@@ -172,103 +177,114 @@ class _MapaAreasPageState extends State<MapaAreasPage> {
           ),
         ],
       ),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : areas.isEmpty
-              ? const Center(child: Text('No se encontraron áreas protegidas'))
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : areas.isEmpty
+              ? const Center(
+                  child: Text('No se encontraron áreas protegidas'),
+                )
               : Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primary.withOpacity(0.1),
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.map,
-                          size: 48,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Mapa Interactivo de Áreas Protegidas',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.map,
+                            size: 64,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Encontradas ${areas.where((a) => a.latitud != null && a.longitud != null).length} áreas con coordenadas',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: FlutterMap(
-                      mapController: _mapController,
-                      options: MapOptions(
-                        initialCenter: const LatLng(
-                          18.7357,
-                          -70.1627,
-                        ), // República Dominicana
-                        initialZoom: 8.0,
-                        minZoom: 3.0,
-                        maxZoom: 18.0,
-                      ),
-                      children: [
-                        TileLayer(
-                          urlTemplate:
-                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                          userAgentPackageName: 'com.ecoprotege.app',
-                          maxZoom: 18,
-                        ),
-                        MarkerLayer(markers: _markers),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    color: Theme.of(context).colorScheme.surface,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Mapa Interactivo',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Toca en cualquier área para verla en Google Maps',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton.icon(
                             onPressed: _openAllAreasInMaps,
-                            icon: const Icon(Icons.open_in_new),
-                            label: const Text('Ver en OSM'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              foregroundColor: Colors.white,
-                            ),
+                            icon: const Icon(Icons.map),
+                            label: const Text('Ver todas en Google Maps'),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: _centerOnAllAreas,
-                            icon: const Icon(Icons.center_focus_strong),
-                            label: const Text('Centrar'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              foregroundColor: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: areas.length,
+                        itemBuilder: (context, index) {
+                          final area = areas[index];
+                          final hasCoordinates = area.latitud != null && area.longitud != null;
+                          
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(16),
+                              leading: CircleAvatar(
+                                backgroundColor: hasCoordinates 
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Colors.grey,
+                                child: Icon(
+                                  hasCoordinates ? Icons.location_on : Icons.location_off,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              title: Text(
+                                area.nombre,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 8),
+                                  Text(area.ubicacion),
+                                  if (hasCoordinates) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Lat: ${area.latitud!.toStringAsFixed(4)}, '
+                                      'Lng: ${area.longitud!.toStringAsFixed(4)}',
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ] else ...[
+                                    const SizedBox(height: 4),
+                                    const Text(
+                                      'Coordenadas no disponibles',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              trailing: hasCoordinates 
+                                  ? const Icon(Icons.open_in_new)
+                                  : const Icon(Icons.location_disabled, color: Colors.grey),
+                              onTap: hasCoordinates 
+                                  ? () => _openInGoogleMaps(area)
+                                  : null,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
     );
   }
 }

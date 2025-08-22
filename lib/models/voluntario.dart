@@ -20,7 +20,7 @@ class Voluntario {
       cedula: json['cedula'] ?? '',
       nombre: json['nombre'] ?? '',
       apellido: json['apellido'] ?? '',
-      email: json['email'] ?? '',
+      email: json['correo'] ?? '',
       password: json['password'] ?? '',
       telefono: json['telefono'] ?? '',
     );
@@ -31,7 +31,7 @@ class Voluntario {
       'cedula': cedula,
       'nombre': nombre,
       'apellido': apellido,
-      'email': email,
+      'correo': email,
       'password': password,
       'telefono': telefono,
     };
