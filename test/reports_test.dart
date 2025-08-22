@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:medioambienterd/screens/Reports/report_damage_screen.dart';
 import 'package:medioambienterd/screens/Reports/my_reports_screen.dart';
 import 'package:medioambienterd/screens/Reports/reports_map_screen.dart';
+import 'package:medioambienterd/widgets/custom_drawer.dart';
 
 void main() {
   testWidgets('Report screens can be instantiated', (
