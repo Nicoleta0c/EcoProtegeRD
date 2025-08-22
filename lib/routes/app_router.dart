@@ -18,6 +18,8 @@ import 'package:medioambienterd/screens/EquipoMinisterio/equipo_ministerio_page.
 import 'package:medioambienterd/screens/Voluntariado/voluntariado_page.dart';
 import 'package:medioambienterd/screens/Voluntariado/registro_voluntario_page.dart';
 import 'package:medioambienterd/screens/AcercaDe/acerca_de_page.dart';
+import 'package:medioambienterd/widgets/custom_drawer.dart';
+import 'package:medioambienterd/screens/Reports/report_damage_screen.dart';
 import 'routes.dart';
 
 final GoRouter appRouter = GoRouter(

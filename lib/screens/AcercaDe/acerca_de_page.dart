@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../widgets/custom_drawer.dart';
 
 class AcercaDePage extends StatelessWidget {
   const AcercaDePage({super.key});
@@ -7,16 +8,21 @@ class AcercaDePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: const Text('Acerca de'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text(
+          'Acerca de',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // App header
             Card(
               color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               child: Padding(
@@ -65,23 +71,11 @@ class AcercaDePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-
             Text(
               'Equipo de Desarrollo',
               style: Theme.of(
                 context,
               ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-
-            // Team members
-            _buildTeamMember(
-              nombre: 'Eric José',
-              apellido: 'Jiménez Martínez',
-              matricula: '2022-0123',
-              telefono: '809-555-0001',
-              telegram: '@ericjose',
-              foto: null,
             ),
             const SizedBox(height: 16),
 
@@ -91,17 +85,25 @@ class AcercaDePage extends StatelessWidget {
               matricula: '2023-1123',
               telefono: '829-987-4447',
               telegram: '@mariaelena',
-              foto: null,
+              foto: 'https://media.discordapp.net/attachments/805203337909764146/1408277096635039905/image.png?ex=68a927c0&is=68a7d640&hm=891c8ca016505afbe41d6094d0efd160ba508a8822c1810f45df5eb5512696e6&=&format=webp&quality=lossless&width=593&height=710',
             ),
             const SizedBox(height: 16),
-
             _buildTeamMember(
-              nombre: 'Carlos David',
-              apellido: 'González Pérez',
-              matricula: '2022-0125',
-              telefono: '809-555-0003',
-              telegram: '@carlosdavid',
-              foto: null,
+              nombre: 'Nicolle',
+              apellido: 'Rosa Andujar',
+              matricula: '2023-1075',
+              telefono: "",
+              telegram: '@niicki.douu',
+              foto: 'https://media.discordapp.net/attachments/805203337909764146/1374050116423516170/PXL_20240310_152653942.jpg?ex=68a89064&is=68a73ee4&hm=f96aa2305b10c20d948b27164e51a0fc49559ee1b3b1ff3ad3f1170949741a94&=&format=webp&width=698&height=930',
+            ),
+            const SizedBox(height: 16),
+            _buildTeamMember(
+              nombre: 'Eric Alberto',
+              apellido: 'Jiménez Collins',
+              matricula: '2023-0966',
+              telefono: "",
+              telegram:"",
+              foto: 'https://media.discordapp.net/attachments/805203337909764146/1408277053522051223/Imagen_de_WhatsApp_2025-08-21_a_las_22.02.34_d42bab3b.jpg?ex=68a927b6&is=68a7d636&hm=be64b8a832e219043a4cb0319f24e0e26aa15eea92fea2afdfbb4c689089ff9a&=&format=webp&width=471&height=438',
             ),
             const SizedBox(height: 24),
 
@@ -133,7 +135,7 @@ class AcercaDePage extends StatelessWidget {
                     ),
                     _buildInfoRow('Carrera:', 'Desarrollo de Software'),
                     _buildInfoRow('Asignatura:', 'Programación Móvil'),
-                    _buildInfoRow('Profesor:', 'Ing. José Manuel García'),
+                    _buildInfoRow('Profesor:', 'Amadis Suarez Genao'),
                     _buildInfoRow('Fecha:', 'Agosto 2025'),
                     _buildInfoRow('Tecnología:', 'Flutter/Dart'),
                   ],

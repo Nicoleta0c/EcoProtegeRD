@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/area_protegida.dart';
 import '../../services/api_service.dart';
+import '../../widgets/custom_drawer.dart';
 
 class AreaDetallePage extends StatefulWidget {
   final String areaId;
@@ -75,9 +76,18 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
     }
 
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: Text(area!.nombre),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(
+          area!.nombre,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        elevation: 0,
         actions: [
           if (area!.latitud != null && area!.longitud != null)
             IconButton(

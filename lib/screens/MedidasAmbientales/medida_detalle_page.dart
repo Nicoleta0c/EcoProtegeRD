@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/medida_ambiental.dart';
 import '../../services/api_service.dart';
+import '../../widgets/custom_drawer.dart';
 
 class MedidaDetallePage extends StatefulWidget {
   final String medidaId;
@@ -64,9 +65,18 @@ class _MedidaDetallePageState extends State<MedidaDetallePage> {
     }
 
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: Text(medida!.titulo),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(
+          medida!.titulo,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -82,7 +92,9 @@ class _MedidaDetallePageState extends State<MedidaDetallePage> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Icon(
@@ -94,9 +106,8 @@ class _MedidaDetallePageState extends State<MedidaDetallePage> {
                     const SizedBox(height: 16),
                     Text(
                       medida!.titulo,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
@@ -106,7 +117,9 @@ class _MedidaDetallePageState extends State<MedidaDetallePage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.secondary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Text(
@@ -132,11 +145,7 @@ class _MedidaDetallePageState extends State<MedidaDetallePage> {
             const SizedBox(height: 16),
 
             // Content
-            _buildSection(
-              'Detalles',
-              medida!.contenido,
-              Icons.article,
-            ),
+            _buildSection('Detalles', medida!.contenido, Icons.article),
             const SizedBox(height: 16),
 
             // Image if available
@@ -189,10 +198,7 @@ class _MedidaDetallePageState extends State<MedidaDetallePage> {
           children: [
             Row(
               children: [
-                Icon(
-                  icon,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   title,
@@ -203,10 +209,7 @@ class _MedidaDetallePageState extends State<MedidaDetallePage> {
               ],
             ),
             const SizedBox(height: 12),
-            Text(
-              content,
-              style: const TextStyle(height: 1.5),
-            ),
+            Text(content, style: const TextStyle(height: 1.5)),
           ],
         ),
       ),
@@ -222,10 +225,7 @@ class _MedidaDetallePageState extends State<MedidaDetallePage> {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.image,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                Icon(Icons.image, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   'Imagen ilustrativa',

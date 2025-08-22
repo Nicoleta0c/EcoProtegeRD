@@ -3,14 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
+import 'package:go_router/go_router.dart';
 import '../../utils/app_colors.dart';
 import '../../services/api_service.dart';
+import '../../routes/routes.dart';
+import '../../utils/session.dart';
 
 class ReportDamageScreen extends StatefulWidget {
   const ReportDamageScreen({Key? key}) : super(key: key);
 
   @override
-  State<ReportDamageScreen> createState() => _ReportDamageScreenState();
+  State<ReportDamageScreen> createState() =>  _ReportDamageScreenState();
 }
 
 class _ReportDamageScreenState extends State<ReportDamageScreen> {
@@ -72,7 +75,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
     try {
       Location location = Location();
 
-      // Verificar si el servicio está habilitado
       bool serviceEnabled = await location.serviceEnabled();
       if (!serviceEnabled) {
         serviceEnabled = await location.requestService();
@@ -93,7 +95,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
         }
       }
 
-      // Verificar permisos
       PermissionStatus permissionGranted = await location.hasPermission();
       if (permissionGranted == PermissionStatus.denied) {
         permissionGranted = await location.requestPermission();
@@ -114,7 +115,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
         }
       }
 
-      // Obtener ubicación con timeout
       LocationData locationData = await location.getLocation().timeout(
         const Duration(seconds: 10),
         onTimeout: () {
@@ -122,7 +122,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
         },
       );
 
-      // Validar que las coordenadas obtenidas sean válidas
       if (locationData.latitude == null || locationData.longitude == null) {
         throw Exception('No se pudieron obtener las coordenadas');
       }
@@ -182,7 +181,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
       return;
     }
 
-    // Validar que los campos no estén vacíos
     final title = _titleController.text.trim();
     final description = _descriptionController.text.trim();
     final latText = _latController.text.trim();
@@ -214,7 +212,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
       return;
     }
 
-    // Validar que las coordenadas no sean 0 (ubicación inválida)
     if (lat == 0.0 || lon == 0.0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -227,7 +224,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
       return;
     }
 
-    // Validar que las coordenadas estén en un rango válido
     if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -241,7 +237,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Convertir imagen a base64
       final bytes = await _pickedImage!.readAsBytes();
       String base64Image = base64Encode(bytes);
 
@@ -253,7 +248,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
       print('Image size: ${base64Image.length} characters');
       print('Guardando reporte localmente...');
 
-      // Usar el ApiService actualizado que ahora guarda localmente
       final result = await ApiService.createReport(
         titulo: title,
         descripcion: description,
@@ -265,14 +259,12 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
       setState(() => _isLoading = false);
 
       if (result['success'] == true) {
-        // Limpiar formulario
         _titleController.clear();
         _descriptionController.clear();
         _latController.clear();
         _lonController.clear();
         setState(() => _pickedImage = null);
 
-        // Mostrar mensaje de éxito y esperar que se muestre
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -283,12 +275,9 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
           );
         }
 
-        // Esperar a que el SnackBar se muestre y luego navegar
         await Future.delayed(const Duration(milliseconds: 800));
 
-        // Verificar múltiples condiciones antes de navegar
         if (mounted && Navigator.canPop(context) && context.mounted) {
-          // Usar pushReplacementNamed en lugar de pop para evitar pantalla negra
           Navigator.pushReplacementNamed(context, '/');
         }
       } else {
@@ -322,38 +311,27 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Permitir acceso directo sin autenticación requerida
     return PopScope(
-      canPop: !_isLoading, // No permitir retroceso mientras se está cargando
+      canPop: !_isLoading,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-
-        // Si no está cargando, permitir salir
         if (!_isLoading && mounted && Navigator.canPop(context)) {
           Navigator.pop(context);
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: AppColors.lightGray,
         appBar: AppBar(
           title: const Text(
             'Reportar Daño Ambiental',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
           ),
-          backgroundColor: const Color(0xFF059669),
-          foregroundColor: Colors.white,
+          backgroundColor: AppColors.primaryGreen,
+          foregroundColor: AppColors.white,
           elevation: 0,
           centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () async {
-              // Verificar si el widget está montado antes de navegar
-              if (mounted && Navigator.canPop(context)) {
-                Navigator.pop(context);
-              }
-            },
-          ),
         ),
+        drawer: const CustomDrawer(), // Added CustomDrawer
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -363,11 +341,11 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: AppColors.darkGray.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -378,28 +356,27 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF059669).withOpacity(0.1),
+                        color: AppColors.accentGreen.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: const Icon(
                         Icons.report_problem_outlined,
                         size: 32,
-                        color: Color(0xFF059669),
+                        color: AppColors.primaryGreen,
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
-
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: AppColors.darkGray.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 2),
                     ),
@@ -415,11 +392,10 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF1F2937),
+                          color: AppColors.darkGray,
                         ),
                       ),
                       const SizedBox(height: 20),
-
                       _buildEnhancedTextField(
                         label: 'Title',
                         controller: _titleController,
@@ -437,7 +413,6 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                         maxLines: 1,
                       ),
                       const SizedBox(height: 20),
-
                       _buildEnhancedTextField(
                         label: 'Description',
                         controller: _descriptionController,
@@ -455,13 +430,12 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                         maxLines: 4,
                       ),
                       const SizedBox(height: 20),
-
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
+                          color: AppColors.lightGray,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                          border: Border.all(color: AppColors.mediumGray),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -470,7 +444,7 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                               children: [
                                 Icon(
                                   Icons.location_on_outlined,
-                                  color: const Color(0xFF059669),
+                                  color: AppColors.primaryGreen,
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
@@ -479,7 +453,7 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF1F2937),
+                                    color: AppColors.darkGray,
                                   ),
                                 ),
                               ],
@@ -505,9 +479,9 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                                     },
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
-                                          decimal: true,
-                                          signed: true,
-                                        ),
+                                      decimal: true,
+                                      signed: true,
+                                    ),
                                     hint: '18.4861',
                                     icon: Icons.my_location,
                                     maxLines: 1,
@@ -533,9 +507,9 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                                     },
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
-                                          decimal: true,
-                                          signed: true,
-                                        ),
+                                      decimal: true,
+                                      signed: true,
+                                    ),
                                     hint: '-69.9312',
                                     icon: Icons.my_location,
                                     maxLines: 1,
@@ -549,34 +523,30 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                               width: double.infinity,
                               child: ElevatedButton.icon(
                                 onPressed:
-                                    _isGettingLocation
-                                        ? null
-                                        : _getCurrentLocation,
-                                icon:
-                                    _isGettingLocation
-                                        ? const SizedBox(
-                                          width: 16,
-                                          height: 16,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                                  Color(0xFF059669),
-                                                ),
+                                    _isGettingLocation ? null : _getCurrentLocation,
+                                icon: _isGettingLocation
+                                    ? const SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            AppColors.primaryGreen,
                                           ),
-                                        )
-                                        : const Icon(Icons.gps_fixed, size: 18),
+                                        ),
+                                      )
+                                    : const Icon(Icons.gps_fixed, size: 18),
                                 label: Text(
                                   _isGettingLocation
                                       ? 'Getting Location...'
                                       : 'Get Current Location',
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: const Color(0xFF059669),
+                                  backgroundColor: AppColors.white,
+                                  foregroundColor: AppColors.primaryGreen,
                                   elevation: 0,
                                   side: const BorderSide(
-                                    color: Color(0xFF059669),
+                                    color: AppColors.primaryGreen,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -591,13 +561,12 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-
                       Row(
                         children: [
                           Icon(
                             Icons.camera_alt_outlined,
                             size: 16,
-                            color: const Color(0xFF059669),
+                            color: AppColors.primaryGreen,
                           ),
                           const SizedBox(width: 6),
                           const Text(
@@ -605,7 +574,7 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF374151),
+                              color: AppColors.darkGray,
                             ),
                           ),
                         ],
@@ -617,96 +586,88 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                           height: 180,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color:
-                                _pickedImage == null
-                                    ? const Color(0xFFF8FAFC)
-                                    : Colors.transparent,
+                            color: _pickedImage == null
+                                ? AppColors.lightGray
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color:
-                                  _pickedImage == null
-                                      ? const Color(0xFF059669).withOpacity(0.3)
-                                      : const Color(0xFFE2E8F0),
+                              color: _pickedImage == null
+                                  ? AppColors.primaryGreen.withOpacity(0.3)
+                                  : AppColors.mediumGray,
                               width: 2,
-                              style:
-                                  _pickedImage == null
-                                      ? BorderStyle.solid
-                                      : BorderStyle.solid,
+                              style: _pickedImage == null
+                                  ? BorderStyle.solid
+                                  : BorderStyle.solid,
                             ),
                           ),
-                          child:
-                              _pickedImage == null
-                                  ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                          child: _pickedImage == null
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            AppColors.accentGreen.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: const Icon(
+                                        Icons.camera_alt_outlined,
+                                        size: 32,
+                                        color: AppColors.primaryGreen,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      'Tap to add photo',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.primaryGreen,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Photo evidence helps us understand the issue better',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.darkGray,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: Stack(
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(16),
-                                        decoration: BoxDecoration(
-                                          color: const Color(
-                                            0xFF059669,
-                                          ).withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(
-                                            50,
+                                      Image.file(
+                                        File(_pickedImage!.path),
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                AppColors.darkGray.withOpacity(0.6),
+                                            borderRadius:
+                                                BorderRadius.circular(20),
                                           ),
-                                        ),
-                                        child: const Icon(
-                                          Icons.camera_alt_outlined,
-                                          size: 32,
-                                          color: Color(0xFF059669),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      const Text(
-                                        'Tap to add photo',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFF059669),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        'Photo evidence helps us understand the issue better',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey[600],
+                                          child: const Icon(
+                                            Icons.edit,
+                                            color: AppColors.white,
+                                            size: 16,
+                                          ),
                                         ),
                                       ),
                                     ],
-                                  )
-                                  : ClipRRect(
-                                    borderRadius: BorderRadius.circular(14),
-                                    child: Stack(
-                                      children: [
-                                        Image.file(
-                                          File(_pickedImage!.path),
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                        ),
-                                        Positioned(
-                                          top: 8,
-                                          right: 8,
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: Colors.black.withOpacity(
-                                                0.6,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: const Icon(
-                                              Icons.edit,
-                                              color: Colors.white,
-                                              size: 16,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                   ),
+                                ),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -715,13 +676,13 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                           Icon(
                             Icons.info_outline,
                             size: 16,
-                            color: Colors.grey[600],
+                            color: AppColors.darkGray,
                           ),
                           const SizedBox(width: 6),
                           Text(
                             'All fields marked with * are required',
                             style: TextStyle(
-                              color: Colors.grey[600],
+                              color: AppColors.darkGray,
                               fontSize: 12,
                             ),
                           ),
@@ -732,20 +693,15 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-
               Container(
                 width: double.infinity,
                 height: 56,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF059669), Color(0xFF10B981)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
+                  gradient: AppColors.primaryGradient,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF059669).withOpacity(0.3),
+                      color: AppColors.primaryGreen.withOpacity(0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -768,23 +724,21 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                                  AppColors.white,
                                 ),
                               ),
                             )
                           else
                             const Icon(
                               Icons.send_rounded,
-                              color: Colors.white,
+                              color: AppColors.white,
                               size: 20,
                             ),
                           const SizedBox(width: 12),
                           Text(
-                            _isLoading
-                                ? 'Submitting Report...'
-                                : 'Submit Report',
+                            _isLoading ? 'Submitting Report...' : 'Submit Report',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: AppColors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -818,14 +772,14 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
       children: [
         Row(
           children: [
-            Icon(icon, size: 16, color: const Color(0xFF059669)),
+            Icon(icon, size: 16, color: AppColors.primaryGreen),
             const SizedBox(width: 6),
             Text(
               '$label *',
               style: TextStyle(
                 fontSize: compact ? 12 : 14,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF374151),
+                color: AppColors.darkGray,
               ),
             ),
           ],
@@ -838,35 +792,35 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
           maxLines: maxLines,
           style: TextStyle(
             fontSize: compact ? 14 : 16,
-            color: const Color(0xFF1F2937),
+            color: AppColors.darkGray,
           ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: Colors.grey[500],
+              color: AppColors.darkGray.withOpacity(0.6),
               fontSize: compact ? 14 : 16,
             ),
             filled: true,
-            fillColor: const Color(0xFFF9FAFB),
+            fillColor: AppColors.lightGray,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: AppColors.mediumGray),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: AppColors.mediumGray),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF059669), width: 2),
+              borderSide: const BorderSide(color: AppColors.primaryGreen, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFEF4444)),
+              borderSide: const BorderSide(color: AppColors.error),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 2),
+              borderSide: const BorderSide(color: AppColors.error, width: 2),
             ),
             contentPadding: EdgeInsets.symmetric(
               horizontal: 16,
@@ -875,6 +829,341 @@ class _ReportDamageScreenState extends State<ReportDamageScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class CustomDrawer extends StatelessWidget {
+  const CustomDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [AppColors.primaryGreen, AppColors.lightGreen],
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.eco, size: 40, color: AppColors.white),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'EcoProtegeRD',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Ministerio de Medio Ambiente',
+                            style: TextStyle(
+                              color: AppColors.white.withOpacity(0.7),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                if (Session.isLoggedIn()) ...[
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: AppColors.white.withOpacity(0.2),
+                          child: Text(
+                            Session.getUserName().isNotEmpty
+                                ? Session.getUserName()[0].toUpperCase()
+                                : 'U',
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                Session.getUserName(),
+                                style: const TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                Session.getUserEmail(),
+                                style: TextStyle(
+                                  color: AppColors.white.withOpacity(0.8),
+                                  fontSize: 12,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ] else ...[
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.person_outline,
+                          color: Colors.white70,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Invitado - Inicia sesión',
+                            style: TextStyle(
+                              color: AppColors.white.withOpacity(0.8),
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.home,
+            title: 'Inicio',
+            route: AppRoutes.home,
+          ),
+          const Divider(),
+          _buildDrawerItem(
+            context,
+            icon: Icons.info,
+            title: 'Sobre Nosotros',
+            route: AppRoutes.aboutUs,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.business_center,
+            title: 'Servicios',
+            route: AppRoutes.services,
+          ),
+          const Divider(),
+          _buildDrawerItem(
+            context,
+            icon: Icons.nature,
+            title: 'Áreas Protegidas',
+            route: AppRoutes.areasProtegidas,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.eco,
+            title: 'Medidas Ambientales',
+            route: AppRoutes.medidasAmbientales,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.people,
+            title: 'Equipo Ministerial',
+            route: AppRoutes.equipoMinisterio,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.volunteer_activism,
+            title: 'Voluntariado',
+            route: AppRoutes.voluntariado,
+          ),
+          const Divider(),
+          if (Session.isLoggedIn()) ...[
+            _buildDrawerItem(
+              context,
+              icon: Icons.report_problem,
+              title: 'Reportar Daño Ambiental',
+              route: AppRoutes.reportDamage,
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.assignment,
+              title: 'Mis Reportes',
+              route: AppRoutes.myReports,
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.map,
+              title: 'Mapa de Reportes',
+              route: AppRoutes.reportsMap,
+            ),
+            const Divider(),
+          ],
+          _buildDrawerItem(
+            context,
+            icon: Icons.article,
+            title: 'Noticias Ambientales',
+            route: AppRoutes.noticias,
+          ),
+          _buildDrawerItem(
+            context,
+            icon: Icons.video_library,
+            title: 'Videos Educativos',
+            route: AppRoutes.videos,
+          ),
+          const Divider(),
+          _buildDrawerItem(
+            context,
+            icon: Icons.info_outline,
+            title: 'Acerca de',
+            route: AppRoutes.acercaDe,
+          ),
+          const Divider(),
+          if (!Session.isLoggedIn()) ...[
+            _buildDrawerItem(
+              context,
+              icon: Icons.login,
+              title: 'Iniciar Sesión',
+              route: AppRoutes.Login,
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.person_add,
+              title: 'Registrarse',
+              route: AppRoutes.Register,
+            ),
+          ] else ...[
+            ListTile(
+              leading: const Icon(Icons.logout, color: AppColors.primaryGreen),
+              title: const Text('Cerrar Sesión'),
+              subtitle: Text('Salir como ${Session.getUserName()}'),
+              onTap: () {
+                _showLogoutDialog(context);
+              },
+            ),
+          ],
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.phone, color: AppColors.primaryGreen),
+            title: const Text('Contacto'),
+            subtitle: const Text('809-567-4300'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.language, color: AppColors.primaryGreen),
+            title: const Text('Sitio Web'),
+            subtitle: const Text('medioambiente.gob.do'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Cerrar Sesión'),
+          content: Text(
+            '¿Estás seguro de que quieres cerrar sesión, ${Session.getUserName()}?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Session.logout();
+                context.go(AppRoutes.home);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen,
+                foregroundColor: AppColors.white,
+              ),
+              child: const Text('Cerrar Sesión'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildDrawerItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String route,
+  }) {
+    final isCurrentRoute = GoRouterState.of(context).uri.path == route;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: isCurrentRoute
+            ? AppColors.primaryGreen.withOpacity(0.1)
+            : null,
+      ),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: isCurrentRoute ? AppColors.primaryGreen : AppColors.darkGray,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isCurrentRoute ? AppColors.primaryGreen : AppColors.darkGray,
+            fontWeight: isCurrentRoute ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+          if (!isCurrentRoute) {
+            context.go(route);
+          }
+        },
+      ),
     );
   }
 }

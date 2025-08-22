@@ -43,7 +43,7 @@ class CustomDrawer extends StatelessWidget {
                           Text(
                             'Ministerio de Medio Ambiente',
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.7),
+                              color: Colors.white.withOpacity(0.7),
                               fontSize: 12,
                             ),
                           ),
@@ -53,18 +53,18 @@ class CustomDrawer extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                // Mostrar información del usuario si está logueado
+                // Información del usuario o invitado
                 if (Session.isLoggedIn()) ...[
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: Colors.white.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       children: [
                         CircleAvatar(
-                          backgroundColor: Colors.white.withValues(alpha: 0.2),
+                          backgroundColor: Colors.white.withOpacity(0.2),
                           child: Text(
                             Session.getUserName().isNotEmpty
                                 ? Session.getUserName()[0].toUpperCase()
@@ -92,7 +92,7 @@ class CustomDrawer extends StatelessWidget {
                               Text(
                                 Session.getUserEmail(),
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.8),
+                                  color: Colors.white.withOpacity(0.8),
                                   fontSize: 12,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -104,11 +104,10 @@ class CustomDrawer extends StatelessWidget {
                     ),
                   ),
                 ] else ...[
-                  // Mostrar mensaje para usuarios no logueados
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: Colors.white.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -123,7 +122,7 @@ class CustomDrawer extends StatelessWidget {
                           child: Text(
                             'Invitado - Inicia sesión',
                             style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.8),
+                              color: Colors.white.withOpacity(0.8),
                               fontSize: 12,
                             ),
                           ),
@@ -135,23 +134,12 @@ class CustomDrawer extends StatelessWidget {
               ],
             ),
           ),
+          // Items visibles siempre
           _buildDrawerItem(
             context,
             icon: Icons.home,
             title: 'Inicio',
             route: AppRoutes.home,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: Icons.login,
-            title: 'Login',
-            route: AppRoutes.Login,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: Icons.app_registration_rounded,
-            title: 'Register',
-            route: AppRoutes.Register,
           ),
           const Divider(),
           _buildDrawerItem(
@@ -192,25 +180,29 @@ class CustomDrawer extends StatelessWidget {
             route: AppRoutes.voluntariado,
           ),
           const Divider(),
-          _buildDrawerItem(
-            context,
-            icon: Icons.report_problem,
-            title: 'Reportar Daño Ambiental',
-            route: AppRoutes.reportDamage,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: Icons.assignment,
-            title: 'Mis Reportes',
-            route: AppRoutes.myReports,
-          ),
-          _buildDrawerItem(
-            context,
-            icon: Icons.map,
-            title: 'Mapa de Reportes',
-            route: AppRoutes.reportsMap,
-          ),
-          const Divider(),
+          // Items de reportes solo si está logueado
+          if (Session.isLoggedIn()) ...[
+            _buildDrawerItem(
+              context,
+              icon: Icons.report_problem,
+              title: 'Reportar Daño Ambiental',
+              route: AppRoutes.reportDamage,
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.assignment,
+              title: 'Mis Reportes',
+              route: AppRoutes.myReports,
+            ),
+            _buildDrawerItem(
+              context,
+              icon: Icons.map,
+              title: 'Mapa de Reportes',
+              route: AppRoutes.reportsMap,
+            ),
+            const Divider(),
+          ],
+          // Noticias, videos y acerca de
           _buildDrawerItem(
             context,
             icon: Icons.article,
@@ -261,7 +253,6 @@ class CustomDrawer extends StatelessWidget {
             title: const Text('Contacto'),
             subtitle: const Text('809-567-4300'),
             onTap: () {
-              // Aquí podrías agregar funcionalidad para llamar
               Navigator.pop(context);
             },
           ),
@@ -290,16 +281,16 @@ class CustomDrawer extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Cerrar diálogo
+                Navigator.pop(context);
               },
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // Cerrar diálogo
-                Navigator.pop(context); // Cerrar drawer
-                Session.logout(); // Cerrar sesión
-                context.go(AppRoutes.home); // Ir al home
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Session.logout();
+                context.go(AppRoutes.home);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2E7D32),
@@ -325,10 +316,9 @@ class CustomDrawer extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color:
-            isCurrentRoute
-                ? const Color(0xFF2E7D32).withValues(alpha: 0.1)
-                : null,
+        color: isCurrentRoute
+            ? const Color(0xFF2E7D32).withOpacity(0.1)
+            : null,
       ),
       child: ListTile(
         leading: Icon(
