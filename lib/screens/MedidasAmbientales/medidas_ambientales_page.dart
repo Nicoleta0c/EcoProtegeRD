@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../models/medida_ambiental.dart';
 import '../../services/api_service.dart';
 import '../../routes/routes.dart';
+import '../../widgets/custom_drawer.dart';
 
 class MedidasAmbientalesPage extends StatefulWidget {
   const MedidasAmbientalesPage({super.key});
@@ -41,16 +42,23 @@ class _MedidasAmbientalesPageState extends State<MedidasAmbientalesPage> {
 
   void _filterMedidas() {
     setState(() {
-      filteredMedidas = medidas.where((medida) {
-        final matchesSearch = searchQuery.isEmpty ||
-            medida.titulo.toLowerCase().contains(searchQuery.toLowerCase()) ||
-            medida.descripcion.toLowerCase().contains(searchQuery.toLowerCase());
-        
-        final matchesCategory = selectedCategory == 'Todas' ||
-            medida.categoria == selectedCategory;
-        
-        return matchesSearch && matchesCategory;
-      }).toList();
+      filteredMedidas =
+          medidas.where((medida) {
+            final matchesSearch =
+                searchQuery.isEmpty ||
+                medida.titulo.toLowerCase().contains(
+                  searchQuery.toLowerCase(),
+                ) ||
+                medida.descripcion.toLowerCase().contains(
+                  searchQuery.toLowerCase(),
+                );
+
+            final matchesCategory =
+                selectedCategory == 'Todas' ||
+                medida.categoria == selectedCategory;
+
+            return matchesSearch && matchesCategory;
+          }).toList();
     });
   }
 
@@ -63,9 +71,15 @@ class _MedidasAmbientalesPageState extends State<MedidasAmbientalesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: const Text('Medidas Ambientales'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text(
+          'Medidas Ambientales',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -93,7 +107,7 @@ class _MedidasAmbientalesPageState extends State<MedidasAmbientalesPage> {
                     itemBuilder: (context, index) {
                       final category = categories[index];
                       final isSelected = selectedCategory == category;
-                      
+
                       return Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: FilterChip(
@@ -114,104 +128,112 @@ class _MedidasAmbientalesPageState extends State<MedidasAmbientalesPage> {
             ),
           ),
           Expanded(
-            child: isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : filteredMedidas.isEmpty
+            child:
+                isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : filteredMedidas.isEmpty
                     ? const Center(
-                        child: Text('No se encontraron medidas ambientales'),
-                      )
+                      child: Text('No se encontraron medidas ambientales'),
+                    )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: filteredMedidas.length,
-                        itemBuilder: (context, index) {
-                          final medida = filteredMedidas[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 16),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(12),
-                              onTap: () {
-                                context.push(
-                                  '${AppRoutes.medidaDetalle}?id=${medida.id}',
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                                .withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(8),
-                                          ),
-                                          child: Icon(
-                                            Icons.eco,
-                                            color: Theme.of(context).colorScheme.primary,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: filteredMedidas.length,
+                      itemBuilder: (context, index) {
+                        final medida = filteredMedidas[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(12),
+                            onTap: () {
+                              context.push(
+                                '${AppRoutes.medidaDetalle}?id=${medida.id}',
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
                                           ),
                                         ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                medida.titulo,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Container(
-                                                padding: const EdgeInsets.symmetric(
-                                                  horizontal: 8,
-                                                  vertical: 4,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary
-                                                      .withOpacity(0.1),
-                                                  borderRadius: BorderRadius.circular(12),
-                                                ),
-                                                child: Text(
-                                                  medida.categoria,
-                                                  style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                        child: Icon(
+                                          Icons.eco,
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
                                         ),
-                                        const Icon(Icons.arrow_forward_ios),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      medida.descripcion,
-                                      style: const TextStyle(
-                                        color: Colors.grey,
                                       ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              medida.titulo,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 4,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary
+                                                    .withOpacity(0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Text(
+                                                medida.categoria,
+                                                style: TextStyle(
+                                                  color:
+                                                      Theme.of(
+                                                        context,
+                                                      ).colorScheme.secondary,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Icon(Icons.arrow_forward_ios),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    medida.descripcion,
+                                    style: const TextStyle(color: Colors.grey),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),

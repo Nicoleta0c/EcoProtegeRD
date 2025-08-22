@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/area_protegida.dart';
 import '../../services/api_service.dart';
+import '../../widgets/custom_drawer.dart';
 
 class AreaDetallePage extends StatefulWidget {
   final String areaId;
@@ -42,7 +43,8 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
 
   Future<void> _openInMaps() async {
     if (area?.latitud != null && area?.longitud != null) {
-      final url = 'https://www.google.com/maps?q=${area!.latitud},${area!.longitud}';
+      final url =
+          'https://www.google.com/maps?q=${area!.latitud},${area!.longitud}';
       if (await canLaunchUrl(Uri.parse(url))) {
         await launchUrl(Uri.parse(url));
       }
@@ -74,9 +76,18 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
     }
 
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
-        title: Text(area!.nombre),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(
+          area!.nombre,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: const Color(0xFF2E7D32),
+        foregroundColor: Colors.white,
+        elevation: 0,
         actions: [
           if (area!.latitud != null && area!.longitud != null)
             IconButton(
@@ -118,44 +129,28 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
               ),
               const SizedBox(height: 16),
             ],
-            
+
             Text(
               area!.nombre,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
 
-            _buildInfoCard(
-              'Descripción',
-              area!.descripcion,
-              Icons.description,
-            ),
+            _buildInfoCard('Descripción', area!.descripcion, Icons.description),
             const SizedBox(height: 16),
 
-            _buildInfoCard(
-              'Ubicación',
-              area!.ubicacion,
-              Icons.location_on,
-            ),
+            _buildInfoCard('Ubicación', area!.ubicacion, Icons.location_on),
             const SizedBox(height: 16),
 
             if (area!.categoria != null) ...[
-              _buildInfoCard(
-                'Categoría',
-                area!.categoria!,
-                Icons.category,
-              ),
+              _buildInfoCard('Categoría', area!.categoria!, Icons.category),
               const SizedBox(height: 16),
             ],
 
             if (area!.tamano != null) ...[
-              _buildInfoCard(
-                'Tamaño',
-                area!.tamano!,
-                Icons.straighten,
-              ),
+              _buildInfoCard('Tamaño', area!.tamano!, Icons.straighten),
               const SizedBox(height: 16),
             ],
 
@@ -175,9 +170,8 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
                           const SizedBox(width: 8),
                           Text(
                             'Coordenadas',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -210,10 +204,7 @@ class _AreaDetallePageState extends State<AreaDetallePage> {
           children: [
             Row(
               children: [
-                Icon(
-                  icon,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   title,
